@@ -183,7 +183,7 @@ def mergeFiles(windowOld):
     # Complex filter settings is a very long argument, therefore the string is created piece by piece
     # duration of "fade type in" specifies the fade in duration at the start and between clips, only duration is required
     # duration of "fade type out" specifies the fade out duration, but also requires an offset, which is calculated by the length of the clip
-    # this needs to be fone for every clip that is used
+    # this needs to be done for every clip that is used
     # TODO: Optionally, ffmpeg's xfades can be used for fades inbetween, this offers a wieder variety of animations, maybe let the user could choose the animation via dropdown
     for file in filesToUse:
         complexFilterString += "[" + str(i) + ":v]fade=type=in:duration=0.5,fade=type=out:duration=0.5:start_time=" + str(files_durations[i]-0.5) + ",setpts=PTS-STARTPTS[v" + str(i) + "]; "
@@ -204,7 +204,9 @@ def mergeFiles(windowOld):
     cmd_merge.append(path + "\\output.mkv")
 
     # Debug
-    # print(cmd_merge)
+    #print(cmd_merge)
+    for cmd in cmd_merge:
+        print(cmd)
 
     # check_call() instead of run() freezes the application until the subprocess is finished - perhaps not perfect, but it stops the user from interrupting the process
     #subprocess.run(cmd_merge)
