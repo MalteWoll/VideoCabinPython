@@ -1,10 +1,12 @@
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
+from tkinter import font
 import sys
 import glob
 import subprocess
-from typing import Collection
+from tkinter.ttk import Style
+from typing import Collection, Sized
 import owncloud
 import os
 import ctypes
@@ -21,6 +23,9 @@ files = glob.glob(path + "/*.mkv")
 filesToUse = []
 files_durations = []
 useButtons = []
+
+# Fixed textsize for every font
+textSize = 30
 
 # Opens a file with the specified program, e.g. VLC
 # TODO: Program path needs to be adjusted -> Maybe add a catch if the path does not exist, prompting the user to search for it?
@@ -128,7 +133,7 @@ def uploadPopup():
 
     window.mainloop()
 
-# Copy output file to connected USB flash drive. For now, the drive must be specified beforehand
+# Copy output file to connected USB flash drive. For now, the drive must be specified beforehand -> This should be ok, since it should not change on the computer the script runs on
 def copyToDrive():
     # TODO: Find path? Prompt user to find path?
     drivePath = "E:"
@@ -151,6 +156,7 @@ def upload():
 
     windowNew.mainloop()
 
+# Method for merging files. From the list of files to merge, a new list is created with the durations of the video files. Then, a ffmpeg command is created and executed via console.
 def mergeFiles(windowOld):
     # Get the durations of the different video files, important for fades between
     files_durations = []
@@ -224,10 +230,13 @@ def videoFileSelectionWindow(window_old):
     
     windowNew = Tk()
     windowNew.title("Video Cabin Merge Manager - File Selection")
+    windowNew.attributes('-fullscreen', True)
 
     i = 0
     i_row = 0
     i_col = 0
+
+    txtFont = ("Helvetica",25)
 
     # Create a title, buttons and checkbox for every video
     for file in files:
@@ -236,23 +245,23 @@ def videoFileSelectionWindow(window_old):
         frame = Frame(windowNew, borderwidth=2, relief="solid")
         frame.grid(column=i_col, row=i_row)
 
-        label_fileName = Label(frame, text=os.path.basename(file))
+        label_fileName = Label(frame, text=os.path.basename(file), font=txtFont)
         label_fileName.grid(column=0, row=0, padx=5, pady=5)
 
         # Play button starts playing the file
-        playButton = Button(frame, text="Play", command= lambda file=file: playVideo(file))
+        playButton = Button(frame, text="Play", command= lambda file=file: playVideo(file), font=txtFont)
         playButton.grid(column=0, row=1, padx=5, pady=5)
 
         # Use Button is green by default, all files are added to the list. Pressing the button makes it turn red, the file is deleted from the list
         # Pressing the button again turns it green again, the file is again added, always in the same order (hopefully?) TODO: Test this
-        useButton = Button(frame, text="Used", bg="green", fg="white", command= lambda file=file, i=i: unuseFile(file,i))
+        useButton = Button(frame, text="Used", bg="green", fg="white", command= lambda file=file, i=i: unuseFile(file,i), font=txtFont)
         useButton.grid(column=0, row=2, padx=5,pady=5)
 
         # Since everything is dynamic, row and column numbers need to count up like this
         i += 1
         i_col += 1
         # Change the value x for 'i_col == x' for the amount of objects in one row, for example x=3 means 3 objects per row
-        if(i_col == 3):
+        if(i_col == 5):
             i_row += 2
             i_col = 0
 
@@ -263,7 +272,7 @@ def videoFileSelectionWindow(window_old):
     windowNew.columnconfigure((0,i_col),pad=30)
     windowNew.rowconfigure((0,i_row),pad=30)
 
-    mergeButton = Button(windowNew, text="Merge video files", command= lambda: mergeFiles(windowNew))
+    mergeButton = Button(windowNew, text="Merge video files", command= lambda: mergeFiles(windowNew), font=txtFont)
     # TODO: Change the following line to something less stupid
     mergeButton.grid(column = (int)((i_col+1)/2), row = i_row+1, pady=5,padx=5)
 
