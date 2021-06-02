@@ -248,6 +248,7 @@ def mergeFiles(windowOld, i_row):
 
     # Create string array for the cmd command
     cmd_merge = ['ffmpeg']
+    cmd_merge.append('-y')
     # Every video is added via '-i <File>'
     for file in filesToUse:
         cmd_merge.append('-i')
@@ -302,7 +303,7 @@ def mergeFiles(windowOld, i_row):
 
     label_instruction = Label(windowOld, text="If you are unhappy with the result, you may merge files again. If not, press the 'Continue' button below.", font=txtFont)
     label_instruction.grid(columnspan=5, row=i_row+3)
-    label_warning = Label(windowOld, text="Please be aware that pressing the button will delete the recorded files!", font=txtFont, fg="Red")
+    label_warning = Label(windowOld, text="Please be aware that you can not return to this screen!", font=txtFont, fg="Red")
     label_warning.grid(columnspan=5, row=i_row+4)
 
     button_continue = Button(windowOld, text="Continue", font=txtFont, command= lambda: areYouSure(windowOld, outputFilePath))
@@ -407,3 +408,8 @@ else:
 
         # Open the export window
         upload(outputFilePath)
+    else:
+        # Error message if no video files are found in the folder
+        window = Tk()
+        window.withdraw()
+        messagebox.showerror("Error", "No video files found!")
