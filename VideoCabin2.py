@@ -1,19 +1,43 @@
+# tkinter for GUI
 from tkinter import *
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import font
-import sys
-import glob
-import subprocess
 from tkinter.ttk import Style
 from typing import Collection, Sized
-import owncloud
+
+# glob for finding files
+import glob
+
+# subprocess and os for operating system operations
+import subprocess
 import os
-import ctypes
+
+# owncloud for upload to sciebo
+import owncloud
+
+# TODO: what was this for?
 from shutil import copyfile
 
+# datetime and re for creating files and directories with dates and times
+from datetime import datetime
+
+# TODO: Open video files in explorer button?
+# TODO: Important! In OBS, check 'Generate file name without space' in the output settings
+# TODO: Set paths correctly
+
 # Path is the path selected at the moment, initialPath is always the path at the start of the application
-path = str(sys.argv[1])
+
+# Previously path was read as command line argument, since the output folder is static, this has been replaced
+# path = str(sys.argv[1])
+path = "D:/obs_scripts/python/VideoSource"
+
+# The directory the output file is created at
+outputPath = "D:/obs_scripts/Python/Output"
+globalOutputFilePath = ""
+
+tempPath = "D:/obs_scripts/Python/Temp"
+
 initialPath = path
 
 # Get all files in the specified path when starting the script
@@ -25,14 +49,31 @@ files_durations = []
 useButtons = []
 
 # Fixed textsize for every font
-textSize = 30
+textSize = 18
+
+# Creates an output folder with the current date and time, so every output is saved
+def createOutputFolder():
+    # Since creating a directory with spaces is not possible with os.mkdir, spaces need to be turned into underscores
+    now = str(datetime.now())
+    translate_table = str.maketrans({' ': '_', ':': '_'})
+    now = now.translate(translate_table)
+
+    now = now[:-7]
+
+    outputFilePath = outputPath + "/Output_"+now
+
+    os.mkdir(outputFilePath)
+
+    print("Output file path: " + str(outputFilePath))
+
+    return outputFilePath
 
 # Opens a file with the specified program, e.g. VLC
 # TODO: Program path needs to be adjusted -> Maybe add a catch if the path does not exist, prompting the user to search for it?
 def playVideo(file):
     # Debug
-    # print(str(file))
-    p = subprocess.Popen(["D:/Program Files/VideoLAN/VLC/vlc.exe", file])
+    #print(str(file))
+    p = subprocess.Popen(["D:/Program Files/VideoLAN/VLC/vlc.exe", "file:///"+str(file)])
 
 # Method for changing the working directory
 def getFolderPath(labelDirectory, labelVideoFiles):
@@ -69,6 +110,21 @@ def useFile(file,i):
     # Debug
     print(filesToUse)
 
+# Moves all video files to a temporary folder
+def moveToTemp(outputFilePath):
+    filelist = glob.glob(os.path.join(path, "*"))
+    os.mkdir(outputFilePath+"/videoFiles")
+    for file in filelist:
+        #os.replace(file, os.path.join(tempPath + "/" + os.path.basename(file)))
+        os.replace(file, outputFilePath+"/videoFiles/"+os.path.basename(file))
+
+# Deletes everything from the temporary folder
+# This has been replaced by copying the files to a folder in the output folder
+def deleteFromTemp():
+    filelist = glob.glob(os.path.join(tempPath, "*"))
+    for file in filelist:
+        os.remove(file)
+
 # Method to upload a file to sciebo with a given username and password
 def uploadToSciebo(*values):
     # Debug - Password! Careful not to show
@@ -84,11 +140,11 @@ def uploadToSciebo(*values):
         dirList = sciebo.list("/")
 
         # If the upload is successfull, close the window. TODO: Do something when it is not successfull (maybe print an error?)
-        if(sciebo.put_file(str(values[2]) + ".mkv", path + "/output.mkv")):
+        if(sciebo.put_file(str(values[2]) + ".mkv", values[4] + "/output.mkv")):
             values[3].destroy()
 
 # PopUp window for entering sciebo account information and file title
-def uploadPopup():
+def uploadPopup(outputFilePath):
     window = Toplevel()
     window.title("Upload")
 
@@ -125,7 +181,7 @@ def uploadPopup():
     label_hintUpload.grid(row=4, columnspan=2, padx=5, pady=5)
 
     # Row 5
-    button_loginSciebo = Button(window, text="Upload", command=lambda: uploadToSciebo(entry_username.get(), entry_password.get(), entry_filename.get(), window))
+    button_loginSciebo = Button(window, text="Upload", command=lambda: uploadToSciebo(entry_username.get(), entry_password.get(), entry_filename.get(), window, outputFilePath))
     button_loginSciebo.grid(column=1, row=5, pady=5, padx=5)
 
     button_cancel = Button(window, text="Cancel", command= lambda: window.destroy())
@@ -134,30 +190,50 @@ def uploadPopup():
     window.mainloop()
 
 # Copy output file to connected USB flash drive. For now, the drive must be specified beforehand -> This should be ok, since it should not change on the computer the script runs on
-def copyToDrive():
+def copyToDrive(outputFilePath):
     # TODO: Find path? Prompt user to find path?
     drivePath = "E:"
-    copyfile(path+"/output.mkv",drivePath+"/output.mkv")
+    copyfile(outputFilePath+"/output.mkv",drivePath+"/output.mkv")
 
 # Open the directory with the output file
-def openOutputDir():
-    # TODO: Maybe copy the file to an output directory?
-    os.startfile(path)
+def openOutputDir(outputFilePath):
+    os.startfile(outputFilePath)
 
 # Window for uploading and/or copying the file to a hard drive
-def upload():
+def upload(outputFilePath):
+    #deleteFromTemp()
+    moveToTemp(outputFilePath)
+
     windowNew = Tk()
     windowNew.title("Video Cabin Merger - Upload")
+    windowNew.attributes('-fullscreen', True)
+
+    txtFont = ("Helvetica",20)
 
     # Buttons for upload, copying and showing in explorer
-    button_upload = Button(text="Upload output file to your accoung @sciebo.th-koeln.de", command=uploadPopup).grid(column=0, row=0, padx=20, pady=15)
-    button_copyToDrive = Button(text="Copy output file to connected USB flash drive", command=copyToDrive).grid(column=0, row=1, padx=20,pady=15)
-    button_showInExplorer = Button(text="Show output file in explorer",command=openOutputDir).grid(column=0,row=2, pady=15, padx=20)
+    button_upload = Button(text="Upload output file to your accoung @sciebo.th-koeln.de", command= lambda: uploadPopup(outputFilePath), font=txtFont).grid(column=0, row=0, padx=20, pady=15)
+    button_copyToDrive = Button(text="Copy output file to connected USB flash drive", command= lambda: copyToDrive(outputFilePath), font=txtFont).grid(column=0, row=1, padx=20,pady=15)
+    button_showInExplorer = Button(text="Show output file in explorer", font=txtFont,command= lambda: openOutputDir(outputFilePath)).grid(column=0,row=2, pady=15, padx=20)
+
+    # Exit button
+    button_exit = Button(text="Exit", command= lambda: windowNew.destroy(), font=txtFont).grid(column=0, row=3, pady=40)
 
     windowNew.mainloop()
 
+# Simple messagebox asking if the user is sure they want to continue
+def areYouSure(windowOld, outputFilePath):
+    result = msgBox = messagebox.askokcancel("Continue", "Are you sure?", icon='warning')
+    if result == True:
+        windowOld.destroy()
+        upload(outputFilePath)
+
 # Method for merging files. From the list of files to merge, a new list is created with the durations of the video files. Then, a ffmpeg command is created and executed via console.
-def mergeFiles(windowOld):
+def mergeFiles(windowOld, i_row):
+    txtFont = ("Helvetica",20)
+
+    # Creates a uniquie output folder
+    outputFilePath = createOutputFolder()
+
     # Get the durations of the different video files, important for fades between
     files_durations = []
     for file in filesToUse:
@@ -206,28 +282,38 @@ def mergeFiles(windowOld):
     cmd_merge.append("-map")
     cmd_merge.append("[a]")
 
-    # TODO: If output path should be changed, do it here. Also create a new outputPath string variable with the information, to find it again later
-    cmd_merge.append(path + "\\output.mkv")
+    cmd_merge.append(outputFilePath + "\\output.mkv")
 
     # Debug
     #print(cmd_merge)
-    for cmd in cmd_merge:
-        print(cmd)
+    #for cmd in cmd_merge:
+        #print(cmd)
 
     # check_call() instead of run() freezes the application until the subprocess is finished - perhaps not perfect, but it stops the user from interrupting the process
     #subprocess.run(cmd_merge)
 
     # TODO: ENABLE AGAIN!!
-    #subprocess.check_call(cmd_merge)
+    subprocess.check_call(cmd_merge)
 
-    windowOld.destroy()
-    upload()
+    messagebox.showinfo("Finished", "Merging complete!")
+
+    button_playOutput = Button(windowOld, text="Play merged file", command= lambda: playVideo(outputFilePath+"/output.mkv"), font=txtFont)
+    button_playOutput.grid(column=2, row=i_row+2, pady=10, padx=10)
+
+    label_instruction = Label(windowOld, text="If you are unhappy with the result, you may merge files again. If not, press the 'Continue' button below.", font=txtFont)
+    label_instruction.grid(columnspan=5, row=i_row+3)
+    label_warning = Label(windowOld, text="Please be aware that pressing the button will delete the recorded files!", font=txtFont, fg="Red")
+    label_warning.grid(columnspan=5, row=i_row+4)
+
+    button_continue = Button(windowOld, text="Continue", font=txtFont, command= lambda: areYouSure(windowOld, outputFilePath))
+    button_continue.grid(column=2,row=i_row+5, pady=20)
 
 
 # Window for selecting the video files
 def videoFileSelectionWindow(window_old):
-    window_old.destroy()
-    
+    # This was previously needed to destroy the first window, since this is now the starting window, it must be disabled
+    #window_old.destroy()
+
     windowNew = Tk()
     windowNew.title("Video Cabin Merge Manager - File Selection")
     windowNew.attributes('-fullscreen', True)
@@ -236,13 +322,14 @@ def videoFileSelectionWindow(window_old):
     i_row = 0
     i_col = 0
 
-    txtFont = ("Helvetica",25)
+    txtFont = ("Helvetica",20)
 
     # Create a title, buttons and checkbox for every video
     for file in files:
         # One frame object contains the name of the clip, a button to view the clip (for example in VLC) and a button to add or remove a clip from the list of clips
         # TODO: Frame formatting
-        frame = Frame(windowNew, borderwidth=2, relief="solid")
+        # TODO: Add video file playback legth
+        frame = Frame(windowNew, borderwidth=1, relief="solid")
         frame.grid(column=i_col, row=i_row)
 
         label_fileName = Label(frame, text=os.path.basename(file), font=txtFont)
@@ -269,15 +356,15 @@ def videoFileSelectionWindow(window_old):
         useButtons.append(useButton)
 
     # Values for space between the video cards
-    windowNew.columnconfigure((0,i_col),pad=30)
-    windowNew.rowconfigure((0,i_row),pad=30)
+    windowNew.columnconfigure((0,i_col),pad=0)
+    windowNew.rowconfigure((0,i_row),pad=0)
 
-    mergeButton = Button(windowNew, text="Merge video files", command= lambda: mergeFiles(windowNew), font=txtFont)
-    # TODO: Change the following line to something less stupid
-    mergeButton.grid(column = (int)((i_col+1)/2), row = i_row+1, pady=5,padx=5)
+    mergeButton = Button(windowNew, text="Merge video files", command= lambda: mergeFiles(windowNew, i_row), font=txtFont)
+    mergeButton.grid(column = 2, row = i_row+1, pady=20,padx=5)
 
     windowNew.mainloop()
 
+# This has been disabled
 def introWindow():
     # Set GUI window start settings
     window = Tk()
@@ -303,6 +390,20 @@ def introWindow():
 
     window.mainloop()
 
-introWindow()
+# Only start the main routine if more than one file is present in the video file directory
+if(len(files) > 1):
+    videoFileSelectionWindow(None)
+else:
+    # And do not do anything if there are no files
+    # TODO: Maybe an error?
+    if(len(files) > 0):
+        # If there is one file, rename it and move it to the output folder
+        # Create a uniquie output folder with time and date
+        outputFilePath = createOutputFolder()
 
-# https://stackoverflow.com/questions/14910858/how-to-specify-where-a-tkinter-window-opens
+        # Move the single video file to that folder and rename it to output
+        # TODO: Fade in/out?
+        os.replace(files[0],outputFilePath+"/output.mkv")
+
+        # Open the export window
+        upload(outputFilePath)
