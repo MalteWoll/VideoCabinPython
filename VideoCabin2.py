@@ -16,15 +16,13 @@ import os
 # owncloud for upload to sciebo
 import owncloud
 
-# TODO: what was this for?
+# shutil for copying files between partitions
 from shutil import copyfile
 
 # datetime and re for creating files and directories with dates and times
 from datetime import datetime
 
-# TODO: Open video files in explorer button?
 # TODO: Important! In OBS, check 'Generate file name without space' in the output settings
-# TODO: Set paths correctly
 
 # Path is the path selected at the moment, initialPath is always the path at the start of the application
 
@@ -267,7 +265,7 @@ def mergeFiles(windowOld, i_row):
     # duration of "fade type in" specifies the fade in duration at the start and between clips, only duration is required
     # duration of "fade type out" specifies the fade out duration, but also requires an offset, which is calculated by the length of the clip
     # this needs to be done for every clip that is used
-    # TODO: Optionally, ffmpeg's xfades can be used for fades inbetween, this offers a wieder variety of animations, maybe let the user could choose the animation via dropdown
+    # TODO: Optionally, ffmpeg's xfades can be used for fades inbetween, this offers a wieder variety of animations, maybe let the user could choose the animation via dropdown -> still artifacts, no idea why
     for file in filesToUse:
         complexFilterString += "[" + str(i) + ":v]fade=type=in:duration=0.5,fade=type=out:duration=0.5:start_time=" + str(files_durations[i]-0.5) + ",setpts=PTS-STARTPTS[v" + str(i) + "]; "
         complexFilterString2 += "[v" + str(i) + "][" + str(i) + ":a]"
@@ -291,8 +289,6 @@ def mergeFiles(windowOld, i_row):
         #print(cmd)
 
     # check_call() instead of run() freezes the application until the subprocess is finished - perhaps not perfect, but it stops the user from interrupting the process
-    #subprocess.run(cmd_merge)
-
     # TODO: ENABLE AGAIN!!
     subprocess.check_call(cmd_merge)
 
