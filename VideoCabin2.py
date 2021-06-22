@@ -22,7 +22,7 @@ from shutil import copyfile
 # datetime and re for creating files and directories with dates and times
 from datetime import datetime
 
-# TODO: Important! In OBS, check 'Generate file name without space' in the output settings
+# Important! In OBS, check 'Generate file name without space' in the output settings
 
 # Path is the path selected at the moment, initialPath is always the path at the start of the application
 
