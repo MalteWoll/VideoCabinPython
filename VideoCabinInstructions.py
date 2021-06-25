@@ -79,6 +79,8 @@ textButtonDelete = "Delete"
 textButtonCancel = "Cancel"
 textButtonRewatch = "Rewatch last video clip"
 textButtonDeleteLatest = "Delete last video clip"
+textButtonFinish = "Finish recording and start merging clips"
+
 textDeleteAreYouSure = "Are you sure you want to delete the last clip?"
 
 class VideoCabinInstructions:
@@ -107,6 +109,7 @@ class VideoCabinInstructions:
 
         if(orderControlCounter >= 0 and orderControlCounter < len(options)):
             options[orderControlCounter](windowOld)
+            
         # Displaying errors
         if(orderControlCounter < 0):
             print("orderControlCounter < 0, something went wrong.")
@@ -144,6 +147,11 @@ class VideoCabinInstructions:
         if(len(files) > 0):
             p = subprocess.Popen([videoPlayerDir, "file:///"+str(files[len(files)-1])])
 
+    def startMergeControl(windowOld):
+        if(windowOld is not None):
+            windowOld.destroy()
+        os.system("python D:/GitHub/VideoCabinPython/VideoCabin2.py")
+
     def deleteLatestVideo(windowOld):
         def removeFile(windowOld):
             # Delete the file
@@ -180,6 +188,7 @@ class VideoCabinInstructions:
 
         button_rewatchLatest = Button(windowNew, text=textButtonRewatch, font=textFont, command=VideoCabinInstructions.playLatestVideo).grid(row=1, padx=paddingX, pady=paddingY)
         button_deleteLatest = Button(windowNew, text=textButtonDeleteLatest, font=textFont, command= lambda: VideoCabinInstructions.deleteLatestVideo(windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
+        button_finish = Button(windowNew, text=textButtonFinish, font=textFont, command= lambda: VideoCabinInstructions.startMergeControl(windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
 
         windowNew.mainloop()
         
