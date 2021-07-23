@@ -98,14 +98,14 @@ class VideoCabin2:
     # Remove the file from the list of files to use and change the button color to red and the text to "unused"
     def unuseFile(file,i):
         filesToUse.remove(file)
-        useButtons[i].config(text="Unused", bg="red", fg="white", command= lambda file=file, i=i: useFile(file,i))
+        useButtons[i].config(text="Unused", bg="red", fg="white", command= lambda file=file, i=i: VideoCabin2.useFile(file,i))
         # Debug
         print(filesToUse)
 
     # Add the video file to the list of files to use, change button to green and text on it to "used"
     def useFile(file,i):
         filesToUse.append(file)
-        useButtons[i].config(text="Used", bg="green", fg="white", command= lambda file=file, i=i: unuseFile(file,i))
+        useButtons[i].config(text="Used", bg="green", fg="white", command= lambda file=file, i=i: VideoCabin2.unuseFile(file,i))
         # Files are being sorted after every time they get added, so the original order is kept
         # TODO: Maybe add a way to let the user sort themselves? Could be complicated, especially on touchscreen
         filesToUse.sort()
@@ -183,7 +183,7 @@ class VideoCabin2:
         label_hintUpload.grid(row=4, columnspan=2, padx=5, pady=5)
 
         # Row 5
-        button_loginSciebo = Button(window, text="Upload", command=lambda: uploadToSciebo(entry_username.get(), entry_password.get(), entry_filename.get(), window, outputFilePath))
+        button_loginSciebo = Button(window, text="Upload", command=lambda: VideoCabin2.uploadToSciebo(entry_username.get(), entry_password.get(), entry_filename.get(), window, outputFilePath))
         button_loginSciebo.grid(column=1, row=5, pady=5, padx=5)
 
         button_cancel = Button(window, text="Cancel", command= lambda: window.destroy())
@@ -204,7 +204,7 @@ class VideoCabin2:
     # Window for uploading and/or copying the file to a hard drive
     def upload(outputFilePath):
         #deleteFromTemp()
-        moveToTemp(outputFilePath)
+        VideoCabin2.moveToTemp(outputFilePath)
 
         windowNew = Tk()
         windowNew.title("Video Cabin Merger - Upload")
@@ -213,9 +213,9 @@ class VideoCabin2:
         txtFont = ("Helvetica",20)
 
         # Buttons for upload, copying and showing in explorer
-        button_upload = Button(text="Upload output file to your accoung @sciebo.th-koeln.de", command= lambda: uploadPopup(outputFilePath), font=txtFont).grid(column=0, row=0, padx=20, pady=15)
-        button_copyToDrive = Button(text="Copy output file to connected USB flash drive", command= lambda: copyToDrive(outputFilePath), font=txtFont).grid(column=0, row=1, padx=20,pady=15)
-        button_showInExplorer = Button(text="Show output file in explorer", font=txtFont,command= lambda: openOutputDir(outputFilePath)).grid(column=0,row=2, pady=15, padx=20)
+        button_upload = Button(text="Upload output file to your accoung @sciebo.th-koeln.de", command= lambda: VideoCabin2.uploadPopup(outputFilePath), font=txtFont).grid(column=0, row=0, padx=20, pady=15)
+        button_copyToDrive = Button(text="Copy output file to connected USB flash drive", command= lambda: VideoCabin2.copyToDrive(outputFilePath), font=txtFont).grid(column=0, row=1, padx=20,pady=15)
+        button_showInExplorer = Button(text="Show output file in explorer", font=txtFont,command= lambda: VideoCabin2.openOutputDir(outputFilePath)).grid(column=0,row=2, pady=15, padx=20)
 
         # Exit button
         button_exit = Button(text="Exit", command= lambda: windowNew.destroy(), font=txtFont).grid(column=0, row=3, pady=40)
@@ -227,14 +227,14 @@ class VideoCabin2:
         result = msgBox = messagebox.askokcancel("Continue", "Are you sure?", icon='warning')
         if result == True:
             windowOld.destroy()
-            upload(outputFilePath)
+            VideoCabin2.upload(outputFilePath)
 
     # Method for merging files. From the list of files to merge, a new list is created with the durations of the video files. Then, a ffmpeg command is created and executed via console.
     def mergeFiles(windowOld, i_row):
         txtFont = ("Helvetica",20)
 
         # Creates a uniquie output folder
-        outputFilePath = createOutputFolder()
+        outputFilePath = VideoCabin2.createOutputFolder()
 
         # Get the durations of the different video files, important for fades between
         files_durations = []
@@ -298,7 +298,7 @@ class VideoCabin2:
 
         messagebox.showinfo("Finished", "Merging complete!")
 
-        button_playOutput = Button(windowOld, text="Play merged file", command= lambda: playVideo(outputFilePath+"/output.mkv"), font=txtFont)
+        button_playOutput = Button(windowOld, text="Play merged file", command= lambda: VideoCabin2.playVideo(outputFilePath+"/output.mkv"), font=txtFont)
         button_playOutput.grid(column=2, row=i_row+2, pady=10, padx=10)
 
         label_instruction = Label(windowOld, text="If you are unhappy with the result, you may merge files again. If not, press the 'Continue' button below.", font=txtFont)
@@ -306,7 +306,7 @@ class VideoCabin2:
         label_warning = Label(windowOld, text="Please be aware that you can not return to this screen!", font=txtFont, fg="Red")
         label_warning.grid(columnspan=5, row=i_row+4)
 
-        button_continue = Button(windowOld, text="Continue", font=txtFont, command= lambda: areYouSure(windowOld, outputFilePath))
+        button_continue = Button(windowOld, text="Continue", font=txtFont, command= lambda: VideoCabin2.areYouSure(windowOld, outputFilePath))
         button_continue.grid(column=2,row=i_row+5, pady=20)
 
 
@@ -337,13 +337,16 @@ class VideoCabin2:
             label_fileName.grid(column=0, row=0, padx=5, pady=5)
 
             # Play button starts playing the file
-            playButton = Button(frame, text="Play", command= lambda file=file: playVideo(file), font=txtFont)
+            playButton = Button(frame, text="Play", command= lambda file=file: VideoCabin2.playVideo(file), font=txtFont)
             playButton.grid(column=0, row=1, padx=5, pady=5)
 
             # Use Button is green by default, all files are added to the list. Pressing the button makes it turn red, the file is deleted from the list
             # Pressing the button again turns it green again, the file is again added, always in the same order (hopefully?) TODO: Test this
-            useButton = Button(frame, text="Used", bg="green", fg="white", command= lambda file=file, i=i: unuseFile(file,i), font=txtFont)
+            useButton = Button(frame, text="Used", bg="green", fg="white", command= lambda file=file, i=i: VideoCabin2.unuseFile(file,i), font=txtFont)
             useButton.grid(column=0, row=2, padx=5,pady=5)
+
+            trimMenuButton = Button(frame, text="Trim Video", command= lambda file=file, i=i: VideoCabin2.trimVideoFile(file,i,windowNew), font=txtFont)
+            trimMenuButton.grid(column=0, row=3, padx=5,pady=5)
 
             # Since everything is dynamic, row and column numbers need to count up like this
             i += 1
@@ -360,10 +363,41 @@ class VideoCabin2:
         windowNew.columnconfigure((0,i_col),pad=0)
         windowNew.rowconfigure((0,i_row),pad=0)
 
-        mergeButton = Button(windowNew, text="Merge video files", command= lambda: mergeFiles(windowNew, i_row), font=txtFont)
+        mergeButton = Button(windowNew, text="Merge video files", command= lambda: VideoCabin2.mergeFiles(windowNew, i_row), font=txtFont)
         mergeButton.grid(column = 2, row = i_row+1, pady=20,padx=5)
 
         windowNew.mainloop()
+
+    def trimVideoFile(file, i, windowOld):
+        trimWindow = Toplevel(windowOld)
+        trimWindow.geometry(str(960) + "x" + str(520) + "+" +  str(480) + "+" + str(270))
+
+        txtFont = ("Helvetica",20)
+
+        # Let the user only interact with this window, as long as it is open
+        trimWindow.grab_set()
+
+        frame2 = Frame(trimWindow, borderwidth=1)
+     
+        frame2.place(in_=trimWindow, anchor="c", relx=.5, rely=.1)
+        playButton = Button(frame2, text="Play Video", command= lambda: VideoCabin2.playVideo(file), font=txtFont)
+        playButton.grid(column=1, row=0, padx=5,pady=5)
+
+        frame3 = Frame(trimWindow, borderwidth=1)
+        frame3.place(in_=trimWindow, anchor="c", relx=.5, rely=.3)
+
+        duration = StringVar(trimWindow)
+        spinbox = Spinbox(frame3, from_=0, to = 10, textvariable=duration)
+        spinbox.grid(column=0, row=0)
+
+        frame4 = Frame(trimWindow, borderwidth=1)
+        frame4.place(in_=trimWindow, anchor="c", relx=.5, rely=.4)
+        label_trimTimeText = Label(frame4, text="Seconds to trim at the end of the clip", font=txtFont).grid(column=1, row=2)
+
+        frame5 = Frame(trimWindow, borderwidth=1)
+        frame5.place(in_=trimWindow, anchor="c", relx=.5, rely=.5)
+        button_trim = Button(frame5, text="Trim", font=txtFont, command= lambda: print(str(duration.get())))
+        button_trim.grid(column=0, row=0)
 
     # This has been disabled
     def introWindow():
