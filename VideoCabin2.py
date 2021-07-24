@@ -38,8 +38,11 @@ tempPath = "D:/obs_scripts/Python/Temp"
 
 initialPath = path
 
-# Get all files in the specified path when starting the script
+# Get all files in the specified path when starting the script, then remove those marked as trimmed, although there should not be any at this point
 files = glob.glob(path + "/*.mkv")
+for file in files:
+    if "TRIM_" in file:
+        files.remove(file)
 
 # Empty global list variables for later use
 filesToUse = []
@@ -345,7 +348,7 @@ class VideoCabin2:
             useButton = Button(frame, text="Used", bg="green", fg="white", command= lambda file=file, i=i: VideoCabin2.unuseFile(file,i), font=txtFont)
             useButton.grid(column=0, row=2, padx=5,pady=5)
 
-            trimMenuButton = Button(frame, text="Trim Video", command= lambda file=file, i=i: VideoCabin2.trimVideoFile(file,i,windowNew), font=txtFont)
+            trimMenuButton = Button(frame, text="Trim Video", command= lambda file=file, i=i: VideoCabin2.trimVideoFileWindow(file,i,windowNew), font=txtFont)
             trimMenuButton.grid(column=0, row=3, padx=5,pady=5)
 
             # Since everything is dynamic, row and column numbers need to count up like this
@@ -368,7 +371,47 @@ class VideoCabin2:
 
         windowNew.mainloop()
 
-    def trimVideoFile(file, i, windowOld):
+    def trimVideoFile(file, durationToTrim, button, button2):
+        # Debug
+        print(file + ", " + durationToTrim)
+
+        # Get the duration of the video file
+        cmd = ['ffprobe', '-i', file, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=%s' % ("p=0")]
+        duration = float(subprocess.check_output(cmd))
+
+        print(duration)
+
+        if(duration < float(durationToTrim)):
+            messagebox.showerror(title="Error", message="Error: Trimming duration is longer than clip duration!")
+        else:
+            dur = duration - float(durationToTrim)
+            # Create the name for the temporary file
+            trimmedFileName = os.path.dirname(file) + "/TRIM_" + os.path.basename(file)
+            cmd2 = ['ffmpeg', '-ss', '0', '-i', file, '-t', str(dur), '-c', 'copy', trimmedFileName]
+            subprocess.check_call(cmd2)
+
+            # TODO: Check for overwriting files
+
+            # Set the buttons to active, since now there is a video to preview
+            button.config(state="normal")
+            button2.config(state="normal")
+
+    def trimCancel(windowOld, file):
+        # Check if a trim file has been created and if yes, delete it, then close the window
+        if(os.path.isfile(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))):
+            os.remove(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))
+        windowOld.destroy()
+
+    def trimApply(windowOld, file):
+        # To be sure, check for the file
+        if(os.path.isfile(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))):
+            # If it is there, remove the old file and rename the new file
+            os.remove(file)
+            os.rename(os.path.dirname(file)+"/TRIM_"+os.path.basename(file), file)
+
+        windowOld.destroy()
+
+    def trimVideoFileWindow(file, i, windowOld):
         trimWindow = Toplevel(windowOld)
         trimWindow.geometry(str(960) + "x" + str(520) + "+" +  str(480) + "+" + str(270))
 
@@ -387,17 +430,31 @@ class VideoCabin2:
         frame3.place(in_=trimWindow, anchor="c", relx=.5, rely=.3)
 
         duration = StringVar(trimWindow)
-        spinbox = Spinbox(frame3, from_=0, to = 10, textvariable=duration)
+        spinbox = Spinbox(frame3, from_=0, to = 10, width=3, font=('Helvetica', 40), textvariable=duration)
         spinbox.grid(column=0, row=0)
 
         frame4 = Frame(trimWindow, borderwidth=1)
         frame4.place(in_=trimWindow, anchor="c", relx=.5, rely=.4)
         label_trimTimeText = Label(frame4, text="Seconds to trim at the end of the clip", font=txtFont).grid(column=1, row=2)
 
+        frame6 = Frame(trimWindow, borderwidth=1)
+        frame6.place(in_=trimWindow, anchor="c", relx=.5, rely=.65)
+        button_previewTrim = Button(frame6, text="Preview Trimmed Video", font=txtFont, state=DISABLED, command= lambda: VideoCabin2.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
+        button_previewTrim.grid(column=0, row=0)
+
+        frame7 = Frame(trimWindow, borderwidth=1)
+        frame7.place(in_=trimWindow, anchor="c", relx=.5, rely=.8)
+        button_accept = Button(frame7, text="Apply Trim", state=DISABLED, font=txtFont, command= lambda: VideoCabin2.trimApply(trimWindow, file))
+        button_accept.grid(column=0, row=0, padx=5)
+        button_cancel = Button(frame7, text="Cancel", font=txtFont, command= lambda: VideoCabin2.trimCancel(trimWindow, file))
+        button_cancel.grid(column=1, row=0, padx=5)
+
         frame5 = Frame(trimWindow, borderwidth=1)
         frame5.place(in_=trimWindow, anchor="c", relx=.5, rely=.5)
-        button_trim = Button(frame5, text="Trim", font=txtFont, command= lambda: print(str(duration.get())))
+        button_trim = Button(frame5, text="Trim", font=txtFont, command= lambda: VideoCabin2.trimVideoFile(file, duration.get(), button_previewTrim, button_accept))
         button_trim.grid(column=0, row=0)
+
+
 
     # This has been disabled
     def introWindow():
@@ -434,14 +491,14 @@ else:
     if(len(files) > 0):
         # If there is one file, rename it and move it to the output folder
         # Create a uniquie output folder with time and date
-        outputFilePath = createOutputFolder()
+        outputFilePath = VideoCabin2.createOutputFolder()
 
         # Move the single video file to that folder and rename it to output
         # TODO: Fade in/out?
         os.replace(files[0],outputFilePath+"/output.mkv")
 
         # Open the export window
-        upload(outputFilePath)
+        VideoCabin2.upload(outputFilePath)
     else:
         # Error message if no video files are found in the folder
         window = Tk()
