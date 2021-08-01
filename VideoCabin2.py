@@ -43,6 +43,9 @@ files = glob.glob(path + "/*.mkv")
 for file in files:
     if "TRIM_" in file:
         files.remove(file)
+for file in files:
+    if "UNTRIMMED_" in file:
+        files.remove(file)
 
 # Empty global list variables for later use
 filesToUse = []
@@ -332,7 +335,7 @@ class VideoCabin2:
         for file in files:
             # One frame object contains the name of the clip, a button to view the clip (for example in VLC) and a button to add or remove a clip from the list of clips
             # TODO: Frame formatting
-            # TODO: Add video file playback legth
+            # TODO: Add video file playback length?
             frame = Frame(windowNew, borderwidth=1, relief="solid")
             frame.grid(column=i_col, row=i_row)
 
@@ -379,18 +382,19 @@ class VideoCabin2:
         cmd = ['ffprobe', '-i', file, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=%s' % ("p=0")]
         duration = float(subprocess.check_output(cmd))
 
-        print(duration)
+        # Debug
+        #print(duration)
 
         if(duration < float(durationToTrim)):
             messagebox.showerror(title="Error", message="Error: Trimming duration is longer than clip duration!")
-        else:
+        else:  
+            if(os.path.isfile(os.path.dirname(file) + "/TRIM_" + os.path.basename(file))):
+                os.remove(os.path.dirname(file) + "/TRIM_" + os.path.basename(file))
             dur = duration - float(durationToTrim)
             # Create the name for the temporary file
             trimmedFileName = os.path.dirname(file) + "/TRIM_" + os.path.basename(file)
             cmd2 = ['ffmpeg', '-ss', '0', '-i', file, '-t', str(dur), '-c', 'copy', trimmedFileName]
             subprocess.check_call(cmd2)
-
-            # TODO: Check for overwriting files
 
             # Set the buttons to active, since now there is a video to preview
             button.config(state="normal")
@@ -406,7 +410,7 @@ class VideoCabin2:
         # To be sure, check for the file
         if(os.path.isfile(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))):
             # If it is there, remove the old file and rename the new file
-            os.remove(file)
+            os.rename(file, os.path.dirname(file)+"/UNTRIMMED_"+os.path.basename(file))
             os.rename(os.path.dirname(file)+"/TRIM_"+os.path.basename(file), file)
 
         windowOld.destroy()

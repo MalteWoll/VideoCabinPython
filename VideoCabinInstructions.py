@@ -114,6 +114,7 @@ textButtonRewatch = "Rewatch last video clip"
 textButtonDeleteLatest = "Delete last video clip"
 textButtonFinish = "Finish recording and start merging clips"
 textButtonStartOBS = "Start recording software"
+textButtonTrimLatest = "Trim last video clip"
 
 textDeleteAreYouSure = "Are you sure you want to delete the last clip?"
 
@@ -185,6 +186,12 @@ class VideoCabinInstructions:
     def playLatestVideo():
         # Get all video files
         files = glob.glob(videoFileDir + "/*.mkv")
+        for file in files:
+            if "TRIM_" in file:
+                files.remove(file)
+        for file in files:
+            if "UNTRIMMED_" in file:
+                files.remove(file)
         # Play the last one in the list
         if(len(files) > 0):
             p = subprocess.Popen([videoPlayerDir, "file:///"+str(files[len(files)-1])])
@@ -208,6 +215,12 @@ class VideoCabinInstructions:
 
         # Get all video files
         files = glob.glob(videoFileDir + "/*.mkv")
+        for file in files:
+            if "TRIM_" in file:
+                files.remove(file)
+        for file in files:
+            if "UNTRIMMED_" in file:
+                files.remove(file)
 
         popUpWidth = int(0.5 * windowWidth)
         popUpHeight = int(0.3 * windowHeight)
@@ -220,6 +233,108 @@ class VideoCabinInstructions:
 
         button_cancel = Button(areYouSureWindow, text=textButtonCancel, font=textFont, command= lambda: areYouSureWindow.destroy()).grid(row=1, padx=paddingX, pady=paddingY)
         button_delete = Button(areYouSureWindow, text=textButtonDelete, font=textFont, command= lambda: removeFile(areYouSureWindow)).grid(row=2, padx=paddingX, pady=paddingY)
+
+    def trimLatestVideo(windowOld):
+        # Get all video files
+        files = glob.glob(videoFileDir + "/*.mkv")
+        for file in files:
+            if "TRIM_" in file:
+                files.remove(file)
+        for file in files:
+            if "UNTRIMMED_" in file:
+                files.remove(file)
+
+        popUpWidth = int(0.7 * windowWidth)
+        popUpHeight = int(0.5 * windowHeight)
+
+        trimWindow = tk.Toplevel(windowOld)
+        trimWindow.geometry(str(popUpWidth) + "x" + str(popUpHeight) + "+" + str(windowPositionX + int(windowWidth * 0.25)) + "+" + str(int(windowPositionY + 40)))
+        txtFont = (textFontStyle,textFontSize)
+
+        if(len(files) > 0):
+            file = files[len(files)-1]
+
+        # Let the user only interact with this window, as long as it is open
+        trimWindow.grab_set()
+
+        frame2 = tk.Frame(trimWindow, borderwidth=1)
+     
+        frame2.place(in_=trimWindow, anchor="c", relx=.5, rely=.1)
+        playButton = Button(frame2, text="Play Video", command= lambda: VideoCabinInstructions.playVideo(file), font=txtFont)
+        playButton.grid(column=1, row=0, padx=5,pady=5)
+
+        frame3 = tk.Frame(trimWindow, borderwidth=1)
+        frame3.place(in_=trimWindow, anchor="c", relx=.5, rely=.3)
+
+        duration = tk.StringVar(trimWindow)
+        spinbox = tk.Spinbox(frame3, from_=0, to = 10, width=3, font=('Helvetica', 40), textvariable=duration)
+        spinbox.grid(column=0, row=0)
+
+        frame4 = tk.Frame(trimWindow, borderwidth=1)
+        frame4.place(in_=trimWindow, anchor="c", relx=.5, rely=.4)
+        label_trimTimeText = Label(frame4, text="Seconds to trim at the end of the clip", font=txtFont).grid(column=1, row=2)
+
+        frame6 = tk.Frame(trimWindow, borderwidth=1)
+        frame6.place(in_=trimWindow, anchor="c", relx=.5, rely=.65)
+        button_previewTrim = Button(frame6, text="Preview Trimmed Video", font=txtFont, state='disabled', command= lambda: VideoCabinInstructions.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
+        button_previewTrim.grid(column=0, row=0)
+
+        frame7 = tk.Frame(trimWindow, borderwidth=1)
+        frame7.place(in_=trimWindow, anchor="c", relx=.5, rely=.8)
+        button_accept = Button(frame7, text="Apply Trim", state='disabled', font=txtFont, command= lambda: VideoCabinInstructions.trimApply(trimWindow, file))
+        button_accept.grid(column=0, row=0, padx=5)
+        button_cancel = Button(frame7, text="Cancel", font=txtFont, command= lambda: VideoCabinInstructions.trimCancel(trimWindow, file))
+        button_cancel.grid(column=1, row=0, padx=5)
+
+        frame5 = tk.Frame(trimWindow, borderwidth=1)
+        frame5.place(in_=trimWindow, anchor="c", relx=.5, rely=.5)
+        button_trim = Button(frame5, text="Trim", font=txtFont, command= lambda: VideoCabinInstructions.trimVideoFile(file, duration.get(), button_previewTrim, button_accept))
+        button_trim.grid(column=0, row=0)
+
+    def trimCancel(windowOld, file):
+        # Check if a trim file has been created and if yes, delete it, then close the window
+        if(os.path.isfile(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))):
+            os.remove(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))
+        windowOld.destroy()
+
+    def trimApply(windowOld, file):
+        # To be sure, check for the file
+        if(os.path.isfile(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))):
+            # If it is there, remove the old file and rename the new file
+            os.rename(file, os.path.dirname(file)+"/UNTRIMMED_"+os.path.basename(file))
+            os.rename(os.path.dirname(file)+"/TRIM_"+os.path.basename(file), file)
+        windowOld.destroy()
+
+    def trimVideoFile(file, durationToTrim, button, button2):
+        # Debug
+        print(file + ", " + durationToTrim)
+
+        # Get the duration of the video file
+        cmd = ['ffprobe', '-i', file, '-show_entries', 'format=duration', '-v', 'quiet', '-of', 'csv=%s' % ("p=0")]
+        duration = float(subprocess.check_output(cmd))
+
+        # Debug
+        #print(duration)
+
+        if(duration < float(durationToTrim)):
+            messagebox.showerror(title="Error", message="Error: Trimming duration is longer than clip duration!")
+        else:  
+            if(os.path.isfile(os.path.dirname(file) + "/TRIM_" + os.path.basename(file))):
+                os.remove(os.path.dirname(file) + "/TRIM_" + os.path.basename(file))
+            dur = duration - float(durationToTrim)
+            # Create the name for the temporary file
+            trimmedFileName = os.path.dirname(file) + "/TRIM_" + os.path.basename(file)
+            cmd2 = ['ffmpeg', '-ss', '0', '-i', file, '-t', str(dur), '-c', 'copy', trimmedFileName]
+            subprocess.check_call(cmd2)
+
+            # Set the buttons to active, since now there is a video to preview
+            button.config(state="normal")
+            button2.config(state="normal")
+
+    def playVideo(file):
+        # Debug
+        #print(str(file))
+        p = subprocess.Popen(["D:/Program Files/VideoLAN/VLC/vlc.exe", "file:///"+str(file)])
 
     # Window for reviewing the last clip recorded and to delete it, if needed
     def fileControl(windowOld):
@@ -235,7 +350,8 @@ class VideoCabinInstructions:
 
         button_rewatchLatest = Button(windowNew, text=textButtonRewatch, font=textFont, command=VideoCabinInstructions.playLatestVideo).grid(row=1, padx=paddingX, pady=paddingY)
         button_deleteLatest = Button(windowNew, text=textButtonDeleteLatest, font=textFont, command= lambda: VideoCabinInstructions.deleteLatestVideo(windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
-        button_finish = Button(windowNew, text=textButtonFinish, font=textFont, command= lambda: VideoCabinInstructions.startMergeControl(windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        button_trimLatest = Button(windowNew, text=textButtonTrimLatest, font=textFont, command= lambda: VideoCabinInstructions.trimLatestVideo(windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        button_finish = Button(windowNew, text=textButtonFinish, font=textFont, command= lambda: VideoCabinInstructions.startMergeControl(windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
 
         windowNew.mainloop()
         
