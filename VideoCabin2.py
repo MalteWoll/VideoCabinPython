@@ -38,6 +38,11 @@ tempPath = "D:/obs_scripts/Python/Temp"
 
 initialPath = path
 
+frameCounter = 0
+filesInFrameCounter = 0
+pageCounter = 0
+frames = {}
+
 # Get all files in the specified path when starting the script, then remove those marked as trimmed, although there should not be any at this point
 files = glob.glob(path + "/*.mkv")
 for file in files:
@@ -315,7 +320,7 @@ class VideoCabin2:
         button_continue.grid(column=0,row=3, pady=20)
 
         frame_text = Frame(windowOld)
-        frame_text.grid(column=0, row=2)
+        frame_text.grid(column=0, row=4)
 
         label_instruction = Label(frame_text, text="Wenn Sie unzufrieden mit dem Ergebnis sind, können Sie die Dateien erneut zusammenführen. Wenn nicht, drücken Sie auf \"Weiter\".", font=txtFont)
         label_instruction.grid(columnspan=5, row=0)
@@ -328,6 +333,11 @@ class VideoCabin2:
         # This was previously needed to destroy the first window, since this is now the starting window, it must be disabled
         #window_old.destroy()
 
+        global frameCounter
+        global filesInFrameCounter
+        global pageCounter
+        global frames
+
         windowNew = Tk()
         windowNew.title("Video Cabin Merge Manager - File Selection")
         windowNew.attributes('-fullscreen', True)
@@ -338,21 +348,69 @@ class VideoCabin2:
 
         txtFont = ("Helvetica",18)
 
-        frame_videoFiles = Frame(windowNew)
-        frame_videoFiles.grid(column=0, row=0)
-
         # Create 10 frames for video files, for a maximum storage of 120 video files
-        frame_videoFiles01 = Frame(windowNew)
-        frame_videoFiles01.grid(column=0, row=0)
+        # Hide all frames but the first one
+        frame_videoFiles0 = Frame(windowNew)
+        frame_videoFiles0.grid(column=0, row=0)
+        #frame_videoFiles0.grid_forget()
 
-        frames = {}
+        frame_videoFiles1 = Frame(windowNew)
+        frame_videoFiles1.grid(column=0, row=0)
+        frame_videoFiles1.grid_forget()
+
+        frame_videoFiles2 = Frame(windowNew)
+        frame_videoFiles2.grid(column=0, row=0)
+        frame_videoFiles1.grid_forget()
+
+        frame_videoFiles3 = Frame(windowNew)
+        frame_videoFiles3.grid(column=0, row=0)
+        frame_videoFiles1.grid_forget()
+
+        frame_videoFiles4 = Frame(windowNew)
+        frame_videoFiles4.grid(column=0, row=0)
+        frame_videoFiles1.grid_forget()
+
+        frame_videoFiles5 = Frame(windowNew)
+        frame_videoFiles5.grid(column=0, row=0)
+        frame_videoFiles1.grid_forget()
+
+        frame_videoFiles6 = Frame(windowNew)
+        frame_videoFiles6.grid(column=0, row=0)
+        frame_videoFiles1.grid_forget()
+
+        frame_videoFiles7 = Frame(windowNew)
+        frame_videoFiles7.grid(column=0, row=0)
+        frame_videoFiles1.grid_forget()
+
+        frame_videoFiles8 = Frame(windowNew)
+        frame_videoFiles8.grid(column=0, row=0)
+        frame_videoFiles1.grid_forget()
+
+        frame_videoFiles9 = Frame(windowNew)
+        frame_videoFiles9.grid(column=0, row=0)
+        frame_videoFiles1.grid_forget()
+
+        #frameCounter = 0
+        #filesInFrameCounter = 0
+        #pageCounter = 0
+
+        frames = {0: frame_videoFiles0,
+                  1: frame_videoFiles1,
+                  2: frame_videoFiles2,
+                  3: frame_videoFiles3,
+                  4: frame_videoFiles4,
+                  5: frame_videoFiles5,
+                  6: frame_videoFiles6,
+                  7: frame_videoFiles7,
+                  8: frame_videoFiles8,
+                  9: frame_videoFiles9 }
 
         # Create a title, buttons and checkbox for every video
         for file in files:
+            filesInFrameCounter += 1
+
             # One frame object contains the name of the clip, a button to view the clip (for example in VLC) and a button to add or remove a clip from the list of clips
-            # TODO: Frame formatting
-            # TODO: Add video file playback length?
-            frame = Frame(frame_videoFiles, borderwidth=1, relief="solid")
+            frame = Frame(frames[frameCounter], borderwidth=1, relief="solid")
             frame.grid(column=i_col, row=i_row)
 
             label_fileName = Label(frame, text=os.path.basename(file), font=txtFont)
@@ -384,12 +442,60 @@ class VideoCabin2:
             filesToUse.append(file)
             useButtons.append(useButton)
 
+            if(filesInFrameCounter == 12):
+                filesInFrameCounter = 0
+                frameCounter += 1
+
         # Values for space between the video cards
-        windowNew.columnconfigure((0,i_col),pad=0)
-        windowNew.rowconfigure((0,i_row),pad=0)
+        #windowNew.columnconfigure((0,i_col),pad=0)
+        #windowNew.rowconfigure((0,i_row),pad=0)
+
+        frame_forwardAndBackward = Frame(windowNew)
+        frame_forwardAndBackward.grid(column=0, row=1)
+        #frame_control = Frame(frame_forwardAndBackward)
+        #frame_control.place(in_=frame_forwardAndBackward, anchor="c", relx=.5, rely=.1)
+
+        # frameCounter: The total amount of frames created, 12 video files per frame, default 1 frame (framecounter = 0). For example, 23 video files will create 3 frames
+        # pageCounter: The page we are currently on. If <= 12 files, only one page.
+
+        label_page = Label(frame_forwardAndBackward, text="Seite " + str(pageCounter+1))
+        label_page.grid(column=1, row=0, padx=5, pady=10)
+
+        def forward(label):
+            global pageCounter
+            global frameCounter
+            global frames
+            pageCounter += 1
+            if(pageCounter <= frameCounter):
+                print("forward yes")
+                frames[pageCounter-1].grid_forget()
+                frames[pageCounter].grid(column=0, row=0)
+                # Since we are counting up from 0, we have to add 1 to start with page 1
+                label.config(text="Seite " + str(pageCounter+1))
+            else:
+                pageCounter -= 1
+
+        def backward(label):
+            global pageCounter
+            global frameCounter
+            global frames
+            pageCounter -= 1
+            if(pageCounter >= 0):
+                print("backward yes")
+                frames[pageCounter+1].grid_forget()
+                frames[pageCounter].grid(column=0, row=0)
+                label.config(text="Seite " + str(pageCounter+1))
+            else:
+                pageCounter += 1
+
+        if(frameCounter > 0):
+            button_back = Button(frame_forwardAndBackward, text="<", font=txtFont, command= lambda: backward(label_page))
+            button_back.grid(column=0, row=0, padx=5, pady=10)
+            button_forward = Button(frame_forwardAndBackward, text=">", font=txtFont, command= lambda: forward(label_page))
+            button_forward.grid(column=2, row=0, padx=5, pady=10)
 
         frame_mergeButton = Frame(windowNew)
-        frame_mergeButton.grid(column=0, row=1)
+        frame_mergeButton.grid(column=0, row=2)
 
         mergeButton = Button(frame_mergeButton, text="Zusammenführen", command= lambda: VideoCabin2.mergeFiles(windowNew, i_row, frame_mergeButton), font=txtFont)
         mergeButton.grid(column = 0, row = 0, pady=20,padx=5)
