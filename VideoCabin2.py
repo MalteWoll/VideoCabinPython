@@ -59,6 +59,10 @@ class VideoCabin2:
     def __init__(self) -> None:
         pass
 
+    def backToInstructions(windowOld):
+        windowOld.destroy()
+        os.system("python D:/GitHub/VideoCabinPython/VideoCabinInstructions.py")
+
     # Creates an output folder with the current date and time, so every output is saved
     def createOutputFolder():
         # Since creating a directory with spaces is not possible with os.mkdir, spaces need to be turned into underscores
@@ -104,14 +108,14 @@ class VideoCabin2:
     # Remove the file from the list of files to use and change the button color to red and the text to "unused"
     def unuseFile(file,i):
         filesToUse.remove(file)
-        useButtons[i].config(text="Unused", bg="red", fg="white", command= lambda file=file, i=i: VideoCabin2.useFile(file,i))
+        useButtons[i].config(text="Nicht benutzen", bg="red", fg="white", command= lambda file=file, i=i: VideoCabin2.useFile(file,i))
         # Debug
         print(filesToUse)
 
     # Add the video file to the list of files to use, change button to green and text on it to "used"
     def useFile(file,i):
         filesToUse.append(file)
-        useButtons[i].config(text="Used", bg="green", fg="white", command= lambda file=file, i=i: VideoCabin2.unuseFile(file,i))
+        useButtons[i].config(text="Benutzen", bg="green", fg="white", command= lambda file=file, i=i: VideoCabin2.unuseFile(file,i))
         # Files are being sorted after every time they get added, so the original order is kept
         # TODO: Maybe add a way to let the user sort themselves? Could be complicated, especially on touchscreen
         filesToUse.sort()
@@ -138,7 +142,7 @@ class VideoCabin2:
         # Debug - Password! Careful not to show
         # print(values)
         if(values[0] == "" or values[1] == "" or values[2] == ""):
-            messagebox.showerror("Error", "Please enter username, password and file name!")
+            messagebox.showerror("Error", "Bitte geben sie Nutzername, Passwort und Dateiname an!!")
         else:
             sciebo = owncloud.Client('https://th-koeln.sciebo.de')
             sciebo.login(values[0], values[1])
@@ -160,28 +164,28 @@ class VideoCabin2:
         # maybe TODO: Toggle for show password
 
         # Row 0
-        label_username = Label(window, text="Username:")
+        label_username = Label(window, text="Nutzername:")
         label_username.grid(column=0, row=0, padx=5, pady=5)
 
         entry_username = Entry(window, width=30)
         entry_username.grid(column=1, row=0, padx=5, pady=5)
         
         # Row 1
-        label_password = Label(window, text="Password:")
+        label_password = Label(window, text="Passwort:")
         label_password.grid(column=0, row=1, padx=5, pady=5)
 
         entry_password = Entry(window, show="*", width=30)
         entry_password.grid(column=1, row=1, padx=5, pady=5)
 
         # Row 2
-        label_filename = Label(window, text="File name:")
+        label_filename = Label(window, text="Dateiname:")
         label_filename.grid(column=0, row=2, padx=5, pady=5)
 
         entry_filename = Entry(window, width=30)
         entry_filename.grid(column=1, row=2, padx=5, pady=5)
 
         # Row 3
-        label_hintUpload = Label(window, text="The file will be uploaded to the root directory of your sciebo account with the file name you entered above.")
+        label_hintUpload = Label(window, text="Die Datei wird zum Hauptverzeichnis Ihres Sciebo Accounts hochgeladen, mit dem Dateinamen den Sie angegeben haben.")
         label_hintUpload.grid(row=3, columnspan=2, padx=5, pady=5)
 
         # Row 4
@@ -219,24 +223,24 @@ class VideoCabin2:
         txtFont = ("Helvetica",20)
 
         # Buttons for upload, copying and showing in explorer
-        button_upload = Button(text="Upload output file to your accoung @sciebo.th-koeln.de", command= lambda: VideoCabin2.uploadPopup(outputFilePath), font=txtFont).grid(column=0, row=0, padx=20, pady=15)
-        button_copyToDrive = Button(text="Copy output file to connected USB flash drive", command= lambda: VideoCabin2.copyToDrive(outputFilePath), font=txtFont).grid(column=0, row=1, padx=20,pady=15)
-        button_showInExplorer = Button(text="Show output file in explorer", font=txtFont,command= lambda: VideoCabin2.openOutputDir(outputFilePath)).grid(column=0,row=2, pady=15, padx=20)
+        button_upload = Button(text="Dateiupload zu Ihrem Sciebo Account @sciebo.th-koeln.de", command= lambda: VideoCabin2.uploadPopup(outputFilePath), font=txtFont).grid(column=0, row=0, padx=20, pady=15)
+        button_copyToDrive = Button(text="Ausgabedatei auf einen angeschlossenen USB Stick kopieren", command= lambda: VideoCabin2.copyToDrive(outputFilePath), font=txtFont).grid(column=0, row=1, padx=20,pady=15)
+        button_showInExplorer = Button(text="Ausgabedatei im Explorer anzeigen", font=txtFont,command= lambda: VideoCabin2.openOutputDir(outputFilePath)).grid(column=0,row=2, pady=15, padx=20)
 
         # Exit button
-        button_exit = Button(text="Exit", command= lambda: windowNew.destroy(), font=txtFont).grid(column=0, row=3, pady=40)
+        button_exit = Button(text="Beenden", command= lambda: windowNew.destroy(), font=txtFont).grid(column=0, row=3, pady=40)
 
         windowNew.mainloop()
 
     # Simple messagebox asking if the user is sure they want to continue
     def areYouSure(windowOld, outputFilePath):
-        result = msgBox = messagebox.askokcancel("Continue", "Are you sure?", icon='warning')
+        result = msgBox = messagebox.askokcancel("Weiter", "Sind Sie sicher?", icon='warning')
         if result == True:
             windowOld.destroy()
             VideoCabin2.upload(outputFilePath)
 
     # Method for merging files. From the list of files to merge, a new list is created with the durations of the video files. Then, a ffmpeg command is created and executed via console.
-    def mergeFiles(windowOld, i_row):
+    def mergeFiles(windowOld, i_row, frame):
         txtFont = ("Helvetica",20)
 
         # Creates a uniquie output folder
@@ -302,18 +306,21 @@ class VideoCabin2:
         # TODO: ENABLE AGAIN!!
         subprocess.check_call(cmd_merge)
 
-        messagebox.showinfo("Finished", "Merging complete!")
+        messagebox.showinfo("Fertig", "Zusammenführen beendet!")
 
-        button_playOutput = Button(windowOld, text="Play merged file", command= lambda: VideoCabin2.playVideo(outputFilePath+"/output.mkv"), font=txtFont)
-        button_playOutput.grid(column=2, row=i_row+2, pady=10, padx=10)
+        button_playOutput = Button(frame, text="Zusammengeführte Datei abspielen", command= lambda: VideoCabin2.playVideo(outputFilePath+"/output.mkv"), font=txtFont)
+        button_playOutput.grid(column=0, row=2, pady=10, padx=10)
 
-        label_instruction = Label(windowOld, text="If you are unhappy with the result, you may merge files again. If not, press the 'Continue' button below.", font=txtFont)
-        label_instruction.grid(columnspan=5, row=i_row+3)
-        label_warning = Label(windowOld, text="Please be aware that you can not return to this screen!", font=txtFont, fg="Red")
-        label_warning.grid(columnspan=5, row=i_row+4)
+        button_continue = Button(frame, text="Weiter", font=txtFont, command= lambda: VideoCabin2.areYouSure(windowOld, outputFilePath))
+        button_continue.grid(column=0,row=3, pady=20)
 
-        button_continue = Button(windowOld, text="Continue", font=txtFont, command= lambda: VideoCabin2.areYouSure(windowOld, outputFilePath))
-        button_continue.grid(column=2,row=i_row+5, pady=20)
+        frame_text = Frame(windowOld)
+        frame_text.grid(column=0, row=2)
+
+        label_instruction = Label(frame_text, text="Wenn Sie unzufrieden mit dem Ergebnis sind, können Sie die Dateien erneut zusammenführen. Wenn nicht, drücken Sie auf \"Weiter\".", font=txtFont)
+        label_instruction.grid(columnspan=5, row=0)
+        label_warning = Label(frame_text, text="Bitte beachten Sie, dass Sie nicht zu dieser Ansicht zurück können!", font=txtFont, fg="Red")
+        label_warning.grid(columnspan=5, row=1)
 
 
     # Window for selecting the video files
@@ -329,36 +336,48 @@ class VideoCabin2:
         i_row = 0
         i_col = 0
 
-        txtFont = ("Helvetica",20)
+        txtFont = ("Helvetica",18)
+
+        frame_videoFiles = Frame(windowNew)
+        frame_videoFiles.grid(column=0, row=0)
+
+        # Create 10 frames for video files, for a maximum storage of 120 video files
+        frame_videoFiles01 = Frame(windowNew)
+        frame_videoFiles01.grid(column=0, row=0)
+
+        frames = {}
 
         # Create a title, buttons and checkbox for every video
         for file in files:
             # One frame object contains the name of the clip, a button to view the clip (for example in VLC) and a button to add or remove a clip from the list of clips
             # TODO: Frame formatting
             # TODO: Add video file playback length?
-            frame = Frame(windowNew, borderwidth=1, relief="solid")
+            frame = Frame(frame_videoFiles, borderwidth=1, relief="solid")
             frame.grid(column=i_col, row=i_row)
 
             label_fileName = Label(frame, text=os.path.basename(file), font=txtFont)
             label_fileName.grid(column=0, row=0, padx=5, pady=5)
 
             # Play button starts playing the file
-            playButton = Button(frame, text="Play", command= lambda file=file: VideoCabin2.playVideo(file), font=txtFont)
+            playButton = Button(frame, text="Vorschau", command= lambda file=file: VideoCabin2.playVideo(file), font=txtFont)
             playButton.grid(column=0, row=1, padx=5, pady=5)
 
             # Use Button is green by default, all files are added to the list. Pressing the button makes it turn red, the file is deleted from the list
             # Pressing the button again turns it green again, the file is again added, always in the same order (hopefully?) TODO: Test this
-            useButton = Button(frame, text="Used", bg="green", fg="white", command= lambda file=file, i=i: VideoCabin2.unuseFile(file,i), font=txtFont)
+            useButton = Button(frame, text="Benutzen", bg="green", fg="white", command= lambda file=file, i=i: VideoCabin2.unuseFile(file,i), font=txtFont)
             useButton.grid(column=0, row=2, padx=5,pady=5)
 
-            trimMenuButton = Button(frame, text="Trim Video", command= lambda file=file, i=i: VideoCabin2.trimVideoFileWindow(file,i,windowNew), font=txtFont)
+            trimMenuButton = Button(frame, text="Zuschneiden", command= lambda file=file, i=i: VideoCabin2.trimVideoFileWindow(file,i,windowNew), font=txtFont)
             trimMenuButton.grid(column=0, row=3, padx=5,pady=5)
+
+            deleteFileButton = Button(frame, text="Löschen", command= lambda file=file, i=i: VideoCabin2.deleteVideoFile(file, windowNew), font=txtFont)
+            deleteFileButton.grid(column=0, row=4, padx=5, pady=5)
 
             # Since everything is dynamic, row and column numbers need to count up like this
             i += 1
             i_col += 1
             # Change the value x for 'i_col == x' for the amount of objects in one row, for example x=3 means 3 objects per row
-            if(i_col == 5):
+            if(i_col == 6):
                 i_row += 2
                 i_col = 0
 
@@ -369,10 +388,37 @@ class VideoCabin2:
         windowNew.columnconfigure((0,i_col),pad=0)
         windowNew.rowconfigure((0,i_row),pad=0)
 
-        mergeButton = Button(windowNew, text="Merge video files", command= lambda: VideoCabin2.mergeFiles(windowNew, i_row), font=txtFont)
-        mergeButton.grid(column = 2, row = i_row+1, pady=20,padx=5)
+        frame_mergeButton = Frame(windowNew)
+        frame_mergeButton.grid(column=0, row=1)
+
+        mergeButton = Button(frame_mergeButton, text="Zusammenführen", command= lambda: VideoCabin2.mergeFiles(windowNew, i_row, frame_mergeButton), font=txtFont)
+        mergeButton.grid(column = 0, row = 0, pady=20,padx=5)
+
+        backButton = Button(frame_mergeButton, text="Zurück zur Anleitung", font=txtFont, command= lambda: VideoCabin2.backToInstructions(windowNew))
+        backButton.grid(column = 0, row = 1, pady=20, padx=5)
 
         windowNew.mainloop()
+
+    def deleteVideoFile(file, windowOld):
+        areYouSureWindow = Toplevel(windowOld)
+        areYouSureWindow.geometry("800" + "x" + "400" + "+" + "600" + "+" + "250")
+        areYouSureWindow.grab_set()
+
+        textFont = ("Helvetica",28)
+
+        label_areYouSure = Label(areYouSureWindow, text="Sind Sie sicher dass Sie das Video löschen möchten?", font=textFont, wraplength=700)
+        label_areYouSure.place(in_=areYouSureWindow, anchor="c", relx=.5, rely=.2)
+        
+        buttonFrame = Frame(areYouSureWindow)
+        buttonFrame.place(in_=areYouSureWindow, anchor="c", relx=.5, rely=.6)
+        button_cancel = Button(buttonFrame, text="Löschen", font=textFont, command= lambda: VideoCabin2.deleteConfirmed(file, windowOld, areYouSureWindow)).grid(row=0, padx=10, pady=10)
+        button_delete = Button(buttonFrame, text="Abbrechen", font=textFont, command= lambda: areYouSureWindow.destroy()).grid(row=1, padx=10, pady=10)
+
+    def deleteConfirmed(file, windowOld, youSureWindow):
+        os.remove(file)
+        youSureWindow.destroy()
+        windowOld.destroy()
+        os.system("python D:/GitHub/VideoCabinPython/VideoCabin2.py")
 
     def trimVideoFile(file, durationToTrim, button, button2):
         # Debug
@@ -427,7 +473,7 @@ class VideoCabin2:
         frame2 = Frame(trimWindow, borderwidth=1)
      
         frame2.place(in_=trimWindow, anchor="c", relx=.5, rely=.1)
-        playButton = Button(frame2, text="Play Video", command= lambda: VideoCabin2.playVideo(file), font=txtFont)
+        playButton = Button(frame2, text="Vorschau", command= lambda: VideoCabin2.playVideo(file), font=txtFont)
         playButton.grid(column=1, row=0, padx=5,pady=5)
 
         frame3 = Frame(trimWindow, borderwidth=1)
@@ -439,23 +485,23 @@ class VideoCabin2:
 
         frame4 = Frame(trimWindow, borderwidth=1)
         frame4.place(in_=trimWindow, anchor="c", relx=.5, rely=.4)
-        label_trimTimeText = Label(frame4, text="Seconds to trim at the end of the clip", font=txtFont).grid(column=1, row=2)
+        label_trimTimeText = Label(frame4, text="Sekunden am Ende des Videos abschneiden", font=txtFont).grid(column=1, row=2)
 
         frame6 = Frame(trimWindow, borderwidth=1)
         frame6.place(in_=trimWindow, anchor="c", relx=.5, rely=.65)
-        button_previewTrim = Button(frame6, text="Preview Trimmed Video", font=txtFont, state=DISABLED, command= lambda: VideoCabin2.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
+        button_previewTrim = Button(frame6, text="Vorschau zugeschnittenes Video", font=txtFont, state=DISABLED, command= lambda: VideoCabin2.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
         button_previewTrim.grid(column=0, row=0)
 
         frame7 = Frame(trimWindow, borderwidth=1)
         frame7.place(in_=trimWindow, anchor="c", relx=.5, rely=.8)
-        button_accept = Button(frame7, text="Apply Trim", state=DISABLED, font=txtFont, command= lambda: VideoCabin2.trimApply(trimWindow, file))
+        button_accept = Button(frame7, text="Zuschneiden bestätigen", state=DISABLED, font=txtFont, command= lambda: VideoCabin2.trimApply(trimWindow, file))
         button_accept.grid(column=0, row=0, padx=5)
         button_cancel = Button(frame7, text="Cancel", font=txtFont, command= lambda: VideoCabin2.trimCancel(trimWindow, file))
         button_cancel.grid(column=1, row=0, padx=5)
 
         frame5 = Frame(trimWindow, borderwidth=1)
         frame5.place(in_=trimWindow, anchor="c", relx=.5, rely=.5)
-        button_trim = Button(frame5, text="Trim", font=txtFont, command= lambda: VideoCabin2.trimVideoFile(file, duration.get(), button_previewTrim, button_accept))
+        button_trim = Button(frame5, text="Zuschneiden", font=txtFont, command= lambda: VideoCabin2.trimVideoFile(file, duration.get(), button_previewTrim, button_accept))
         button_trim.grid(column=0, row=0)
 
 
@@ -507,4 +553,4 @@ else:
         # Error message if no video files are found in the folder
         window = Tk()
         window.withdraw()
-        messagebox.showerror("Error", "No video files found!")
+        messagebox.showerror("Error", "Keine Videodateien gefunden!")

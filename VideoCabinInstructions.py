@@ -4,6 +4,8 @@ from tkinter import Grid, Label
 from tkinter import Button
 import tkinter
 
+from threading import Thread
+
 # For loading images
 from PIL import ImageTk, Image
 
@@ -70,53 +72,53 @@ textFontStyle = "Helvetica"
 textFontSize = 20
 textFontSizeSmaller = 16
 
-textWelcomeMessage1 = "Welcome to the Video Cabin! Please follow the instructions to learn how to create your videos."
-textWelcomeMessage2 = "Press the 'Continue' button to follow the instructions. If you are already familiar with the application, you can skip this tutorial by pressing the 'Skip' button."
+textWelcomeMessage1 = "Willkommen zur Video Cabin! Bitte folgen Sie dieser Anleitung, um Ihre eigenen Video zu erstellen."
+textWelcomeMessage2 = "Drücken Sie auf den \"Weiter\" Button um die Anleitung zu durchlaufen. Wenn Sie mit dem Aufbau bereits vertraut sind, können Sie den \"Überspringen\" Button drücken."
 
-textPhantomPower1 = "To allow audio input, please press the 48V button on the front of the audio interface (the small red device) to your left. The exact location is pictured below."
-textPhantomPower2 = "If successfull, the \"48V\" will glow red."
+textPhantomPower1 = "Bitte drücken Sie auf den 48V Knopf auf dem Audio Interface auf Ihrer linken Seite (siehe Bild)."
+textPhantomPower2 = "\"48V\" sollte danach rot leuchten."
 
-textStartOBS1 = "To start the recording software, press the button below."
+textStartOBS1 = "Bitte drücken Sie auf den Button unter diesem Text, um die Aufnahmesoftware zu starten."
 
-textCameraOn1 = "Now the camera needs to be turned on. Turn the top right lever on the camera to \"ON\" (See the image below)."
-textCameraOn2 = "Additionally, the live view needs to be enabled. To do so, press the \"LV\" button on the camera as shown in the image below."
+textCameraOn1 = "Schalten Sie nun die Kamera ein. Drehen Sie dafür den Drehknopf oben auf der Kamera auf \"ON\" (Siehe Bild)."
+textCameraOn2 = "Zusätzlich muss der Live View eingeschaltet werden. Drücken Sie dafür auf den \"LV\" Knopf auf der Kamera, wie im Bild gezeigt."
 
-textLaptop1 = "Place your laptop on the are in front of you, just below the camera. Make sure the screen does not block the camera."
-textLaptop2 = "Connect the laptop with the HDMI cable. If the HDMI cable does not fit, try one of the adapters."
+textLaptop1 = "Platzieren Sie Ihren Laptop auf dem Dafür vorgesehenen Platz, unterhalb der Kamera. Stellen Sie sicher, dass der Bildschirm nicht die Kamera blockiert."
+textLaptop2 = "Verbinden Sie den Laptop mit dem dafür vorgesehenen HDMI Kabel. Wenn Ihr Laptop keinen Anschluss für HDMI hat, benutzen Sie einen der bereitgelegten Adapter."
 
-textPresenter1 = "Take the presenter from the desk. Slide out the USB device as shown in the images below."
-textPresenter2 = "Connect the USB device to one of the USB ports of your laptop, as shown below."
-textPresenter3 = "Start PowerPoint on your laptop and open your presentation. You can go back and forth within the slides with the presenter now."
+textPresenter1 = "Nehmen Sie den Presenter und schieben Sie den USB Anschluss heraus, wie im Bild gezeigt."
+textPresenter2 = "Verbinden Sie den USB Anschluss mit einem der USB Ports Ihres Laptops."
+textPresenter3 = "Starten Sie Powerpoint auf Ihrem Laptop und starten Sie Ihre Präsentation. Sie können nun mit dem Presenter vor und zurück in Ihren Folien gehen."
 
-textRecordControl1 = "You control your recordings with the buttons on the left side of this screens. First, type in your name (and/or field and faculty), if you want to show it at any points of the presentation."
-textRecordControl2 = "You can switch between three scenes for your presentation. We will give you an overview how and what each scene looks like."
-textRecordControl3 = "The first button, \"Fullscreen\" is used to show only the presentation, you will not be visible at all."
-textRecordControl4 = "The second button, \"Totale\" is used to show the presentation on the TV in the background, with you standing on the side of it."
-textRecordControl5 = "The third button, \"PiP\" is used for a picture-in-picture presentation with the presentation in fullscreen and you in the top right corner."
-textRecordControl6 = "Feel free to try out the different scenes to find the one that you feel most comfortable with before you start recording. You can, of course, change the scene at any time."
-textRecordControl7 = "If you want to blend in your name (and additional information you entered before), press the button shown below. The information will linger for 5 seconds, before fading out."
+textRecordControl1 = "Mit den Buttons auf der linken Bilschirmseite können Sie die Aufnahme kontrollieren. Geben Sie bitte zuerst Ihren Namen (und/oder Fakultät oder andere Informationen) ein, wenn Sie diese(n) in der Präsentation als Bauchbinde anzeigen lassen wollen."
+textRecordControl2 = "Sie können zwischen drei Szenen auswählen, im Folgenden erhalten Sie einen Überblick über diese."
+textRecordControl3 = "Mit dem ersten Button, \"Fullscreen\", wird nur die Präsentation angezeigt, ohne dass Sie zu sehen sind."
+textRecordControl4 = "Mit dem zweiten Button, \"Totale\", wird die Präsentation auf dem Fernseher hinter Ihnen angezeigt, während Sie daneben stehen."
+textRecordControl5 = "Mit dem dritten Button, \"PiP\", wird eine Bild-im-Bild Präsentation angezeigt, dabei sind die Folien im Vollbild und Sie werden in einem kleinen Fenster in der oberen Ecke angezeigt."
+textRecordControl6 = "Probieren Sie die verschiedenen Szenen aus um herauszufinden, welche am Besten zu Ihrer Präsentation passt. Sie können diese natürlich jederzeit umstellen."
+textRecordControl7 = "Wenn Sie Ihren Namen per Bauchbinde einblenden wollen, drücken Sie auf den Button der unter diesem Text beispielhaft angezeigt wird. Die Bauchbinde wird 5 Sekunden angezeigt und verschwindet dann wieder."
 
-textAudioInstructions1 = "Stand between the floor markers and read the following sentence in your normal loudness. Check on the loudness meter on the left Monitor (image below). The level must be always between green and yellow."
-textAudioInstructions2 = "If it's only green, adjust the level a little bit by turning the knob on the red audio interface (image below) clockwise. If it reaches the red zone, you must turn counterclockwise."
+textAudioInstructions1 = "Stellen Sie sich auf die Markierung auf dem Boden und reden Sie in normaler Lautstärke. Überprüfen Sie die Lautstärke auf dem linken Monitor (siehe Bild). Das Lautstärkelevel sollte im gelben Bereich liegen."
+textAudioInstructions2 = "Wenn die Lautstärke im grünen Bereich liegt, drehen Sie den Knopf auf dem Audio Interface im Uhrzeigersinn (siehe Bild) und reden Sie erneut in normaler Lautstärke. Liegt die Lautstärke im roten Bereich, drehen Sie den Knopf gegen den Uhrzeigersinn."
 
-textRecording1 = "When you are ready to start, press the record button. After a five second countdown, the recording will begin. Pressing the button again will stop the recording."
-textRecording2 = "You can record as many clips as you want. On the next page you have the ability to rewatch the last clip, and if you are unhappy with it to delete it."
-textRecording3 = "When you are done with your recordings, you can merge the recorded clips. In the overview you can first rewatch them again, and then select or deselect the ones you wish to use."
+textRecording1 = "Wenn Sie bereit für die Aufnahme sind, drücken sie auf den Aufnahme-Button. Die Aufnahme beginnt nach einen fünfsekündigen Countdown. Drücken Sie den Button erneut, um die Aufnahme zu beenden."
+textRecording2 = "Sie können so viele Clips aufnehmen wie sie wollen. Auf der nächsten Seite haben Sie die Möglichkeit, den letzten Clip anzusehen, zu löschen, oder am Ende des Clips einige Sekunden wegzuschneiden."
+textRecording3 = "Sie können Ihre Clips nach den Aufnahmen in ein Video zusammenführen. In dem Menü dafür können Sie die Clips ebenfalls erneut anschauen und auswählen welche Sie verwenden möchten."
 
 textFileControlIntro = "Not sure what's here."
 
-textButtonContinue = "Continue"
-textButtonSkip = "Skip"
-textButtonBack = "Back"
-textButtonDelete = "Delete"
-textButtonCancel = "Cancel"
-textButtonRewatch = "Rewatch last video clip"
-textButtonDeleteLatest = "Delete last video clip"
-textButtonFinish = "Finish recording and start merging clips"
-textButtonStartOBS = "Start recording software"
-textButtonTrimLatest = "Trim last video clip"
+textButtonContinue = "Weiter"
+textButtonSkip = "Überspringen"
+textButtonBack = "Zurück"
+textButtonDelete = "Löschen"
+textButtonCancel = "Abbrechen"
+textButtonRewatch = "Letztes Video ansehen"
+textButtonDeleteLatest = "Letztes Video löschen"
+textButtonFinish = "Aufnehmen beenden und Videos zusammenführen"
+textButtonStartOBS = "Aufnahmesoftware starten"
+textButtonTrimLatest = "Letztes Video zuschneiden"
 
-textDeleteAreYouSure = "Are you sure you want to delete the last clip?"
+textDeleteAreYouSure = "Sind Sie sicher dass Sie das letzte Video löschen wollen?"
 
 class VideoCabinInstructions:
     def __init__(self) -> None:
@@ -204,7 +206,8 @@ class VideoCabinInstructions:
     @staticmethod
     def startOBS():
         # OBS requires you to be in the same directory before starting it, otherwise the start fails with an error
-        os.system("cd " + "\"" + obsDir + "\"" + "& call " + "\""  + obsDirExe + "\"")
+        t = Thread(target = lambda: os.system("cd " + "\"" + obsDir + "\"" + "& call " + "\""  + obsDirExe + "\""))
+        t.start()
 
     def deleteLatestVideo(windowOld):
         def removeFile(windowOld):
@@ -272,23 +275,23 @@ class VideoCabinInstructions:
 
         frame4 = tk.Frame(trimWindow, borderwidth=1)
         frame4.place(in_=trimWindow, anchor="c", relx=.5, rely=.4)
-        label_trimTimeText = Label(frame4, text="Seconds to trim at the end of the clip", font=txtFont).grid(column=1, row=2)
+        label_trimTimeText = Label(frame4, text="Sekunden am Ende des Videos schneiden", font=txtFont).grid(column=1, row=2)
 
         frame6 = tk.Frame(trimWindow, borderwidth=1)
         frame6.place(in_=trimWindow, anchor="c", relx=.5, rely=.65)
-        button_previewTrim = Button(frame6, text="Preview Trimmed Video", font=txtFont, state='disabled', command= lambda: VideoCabinInstructions.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
+        button_previewTrim = Button(frame6, text="Videovorschau zugeschnittenes Video", font=txtFont, state='disabled', command= lambda: VideoCabinInstructions.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
         button_previewTrim.grid(column=0, row=0)
 
         frame7 = tk.Frame(trimWindow, borderwidth=1)
         frame7.place(in_=trimWindow, anchor="c", relx=.5, rely=.8)
-        button_accept = Button(frame7, text="Apply Trim", state='disabled', font=txtFont, command= lambda: VideoCabinInstructions.trimApply(trimWindow, file))
+        button_accept = Button(frame7, text="Zuschneiden bestätigen", state='disabled', font=txtFont, command= lambda: VideoCabinInstructions.trimApply(trimWindow, file))
         button_accept.grid(column=0, row=0, padx=5)
-        button_cancel = Button(frame7, text="Cancel", font=txtFont, command= lambda: VideoCabinInstructions.trimCancel(trimWindow, file))
+        button_cancel = Button(frame7, text="Abbrechen", font=txtFont, command= lambda: VideoCabinInstructions.trimCancel(trimWindow, file))
         button_cancel.grid(column=1, row=0, padx=5)
 
         frame5 = tk.Frame(trimWindow, borderwidth=1)
         frame5.place(in_=trimWindow, anchor="c", relx=.5, rely=.5)
-        button_trim = Button(frame5, text="Trim", font=txtFont, command= lambda: VideoCabinInstructions.trimVideoFile(file, duration.get(), button_previewTrim, button_accept))
+        button_trim = Button(frame5, text="Zuschneiden", font=txtFont, command= lambda: VideoCabinInstructions.trimVideoFile(file, duration.get(), button_previewTrim, button_accept))
         button_trim.grid(column=0, row=0)
 
     def trimCancel(windowOld, file):
@@ -346,8 +349,7 @@ class VideoCabinInstructions:
         windowNew.title("Video Files")
         textFont = (textFontStyle,textFontSize)
 
-        text_intro = Label(windowNew, text=textFileControlIntro, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
-
+        button_back = Button(windowNew, text="Nächstes Video aufnehmen", font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=0, padx=paddingX, pady=paddingY)
         button_rewatchLatest = Button(windowNew, text=textButtonRewatch, font=textFont, command=VideoCabinInstructions.playLatestVideo).grid(row=1, padx=paddingX, pady=paddingY)
         button_deleteLatest = Button(windowNew, text=textButtonDeleteLatest, font=textFont, command= lambda: VideoCabinInstructions.deleteLatestVideo(windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
         button_trimLatest = Button(windowNew, text=textButtonTrimLatest, font=textFont, command= lambda: VideoCabinInstructions.trimLatestVideo(windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
