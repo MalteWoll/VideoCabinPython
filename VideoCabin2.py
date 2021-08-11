@@ -6,6 +6,8 @@ from tkinter import font
 from tkinter.ttk import Style
 from typing import Collection, Sized
 
+import threading
+
 # glob for finding files
 import glob
 
@@ -244,11 +246,26 @@ class VideoCabin2:
             windowOld.destroy()
             VideoCabin2.upload(outputFilePath)
 
+    # Method to start the merge process. To prevent freezing the GUI and allowing an information about the process, it has been moved to another thread.
+    def startMergeThread(windowOld, i_row, frame):
+        txtFont = ("Helvetica",20)
+        windowMergeInProgress = Toplevel(windowOld)
+        windowMergeInProgress.geometry("800" + "x" + "400" + "+" + "600" + "+" + "250")
+        windowMergeInProgress.grab_set()
+        windowMergeInProgress.attributes('-disabled', True)
+
+        label_mergeInProgress = Label(windowMergeInProgress, text="Zusammenführen, bitte warten.", font=txtFont)
+        label_mergeInProgress.place(in_=windowMergeInProgress, anchor="c", relx=.5, rely=.2)
+        label_mergeInProgress2 = Label(windowMergeInProgress, text="Dies kann einige Minuten dauern.", font=txtFont)
+        label_mergeInProgress2.place(in_=windowMergeInProgress, anchor="c", relx=.5, rely=.4)
+
+        threading.Thread(target= lambda: VideoCabin2.mergeFiles(windowOld, i_row, frame, windowMergeInProgress)).start()
+
     # Method for merging files. From the list of files to merge, a new list is created with the durations of the video files. Then, a ffmpeg command is created and executed via console.
-    def mergeFiles(windowOld, i_row, frame):
+    def mergeFiles(windowOld, i_row, frame, windowPopup):
         txtFont = ("Helvetica",20)
 
-        # Creates a uniquie output folder
+        # Creates a unique output folder
         outputFilePath = VideoCabin2.createOutputFolder()
 
         # Get the durations of the different video files, important for fades between
@@ -311,7 +328,11 @@ class VideoCabin2:
         # TODO: ENABLE AGAIN!!
         subprocess.check_call(cmd_merge)
 
-        messagebox.showinfo("Fertig", "Zusammenführen beendet!")
+        #mergingInProgressPopup.destroy()
+
+        #messagebox.showinfo("Fertig", "Zusammenführen beendet!")
+
+        windowPopup.destroy()
 
         button_playOutput = Button(frame, text="Zusammengeführte Datei abspielen", command= lambda: VideoCabin2.playVideo(outputFilePath+"/output.mkv"), font=txtFont)
         button_playOutput.grid(column=0, row=2, pady=10, padx=10)
@@ -341,6 +362,8 @@ class VideoCabin2:
         windowNew = Tk()
         windowNew.title("Video Cabin Merge Manager - File Selection")
         windowNew.attributes('-fullscreen', True)
+
+        windowNew.configure(background='#4c4c4c')
 
         i = 0
         i_row = 0
@@ -413,8 +436,12 @@ class VideoCabin2:
             frame = Frame(frames[frameCounter], borderwidth=1, relief="solid")
             frame.grid(column=i_col, row=i_row)
 
+            frame.configure(background='#4c4c4c')
+
             label_fileName = Label(frame, text=os.path.basename(file), font=txtFont)
             label_fileName.grid(column=0, row=0, padx=5, pady=5)
+
+            label_fileName.configure(background='#4c4c4c')
 
             # Play button starts playing the file
             playButton = Button(frame, text="Vorschau", command= lambda file=file: VideoCabin2.playVideo(file), font=txtFont)
@@ -497,7 +524,7 @@ class VideoCabin2:
         frame_mergeButton = Frame(windowNew)
         frame_mergeButton.grid(column=0, row=2)
 
-        mergeButton = Button(frame_mergeButton, text="Zusammenführen", command= lambda: VideoCabin2.mergeFiles(windowNew, i_row, frame_mergeButton), font=txtFont)
+        mergeButton = Button(frame_mergeButton, text="Zusammenführen", command= lambda: VideoCabin2.startMergeThread(windowNew, i_row, frame_mergeButton), font=txtFont)
         mergeButton.grid(column = 0, row = 0, pady=20,padx=5)
 
         backButton = Button(frame_mergeButton, text="Zurück zur Anleitung", font=txtFont, command= lambda: VideoCabin2.backToInstructions(windowNew))
