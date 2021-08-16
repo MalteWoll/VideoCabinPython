@@ -35,7 +35,8 @@ globalOutputFilePath = ""
 
 tempPath = "D:/obs_scripts/Python/Temp"
 
-bgColor = '#4c4c4c'
+bgColor = '#1e1e1e'
+btnColor = '#4c4c4c'
 fgColor = '#ffffff'
 
 initialPath = path
@@ -448,10 +449,10 @@ class VideoCabin2:
             label_fileName = Label(frame, text=os.path.basename(file), font=txtFont)
             label_fileName.grid(column=0, row=0, padx=5, pady=5)
 
-            label_fileName.configure(background=bgColor, fg='#ffffff')
+            label_fileName.configure(background=bgColor, fg=fgColor)
 
             # Play button starts playing the file
-            playButton = Button(frame, text="Vorschau", command= lambda file=file: VideoCabin2.playVideo(file), font=txtFont)
+            playButton = Button(frame, text="Vorschau", command= lambda file=file: VideoCabin2.playVideo(file), font=txtFont, bg=btnColor, fg=fgColor)
             playButton.grid(column=0, row=1, padx=5, pady=5)
 
             # Use Button is green by default, all files are added to the list. Pressing the button makes it turn red, the file is deleted from the list
@@ -459,10 +460,10 @@ class VideoCabin2:
             useButton = Button(frame, text="Benutzen", bg="green", fg="white", command= lambda file=file, i=i: VideoCabin2.unuseFile(file,i), font=txtFont)
             useButton.grid(column=0, row=2, padx=5,pady=5)
 
-            trimMenuButton = Button(frame, text="Zuschneiden", command= lambda file=file, i=i: VideoCabin2.trimVideoFileWindow(file,i,windowNew), font=txtFont)
+            trimMenuButton = Button(frame, text="Zuschneiden", command= lambda file=file, i=i: VideoCabin2.trimVideoFileWindow(file,i,windowNew), font=txtFont, bg=btnColor, fg=fgColor)
             trimMenuButton.grid(column=0, row=3, padx=5,pady=5)
 
-            deleteFileButton = Button(frame, text="Löschen", command= lambda file=file, i=i: VideoCabin2.deleteVideoFile(file, windowNew), font=txtFont)
+            deleteFileButton = Button(frame, text="Löschen", command= lambda file=file, i=i: VideoCabin2.deleteVideoFile(file, windowNew), font=txtFont, bg=btnColor, fg=fgColor)
             deleteFileButton.grid(column=0, row=4, padx=5, pady=5)
 
             # Since everything is dynamic, row and column numbers need to count up like this
@@ -522,19 +523,19 @@ class VideoCabin2:
                 pageCounter += 1
 
         if(frameCounter > 0):
-            button_back = Button(frame_forwardAndBackward, text="<", font=txtFont, command= lambda: backward(label_page))
+            button_back = Button(frame_forwardAndBackward, text="<", font=txtFont, command= lambda: backward(label_page), bg=btnColor, fg=fgColor)
             button_back.grid(column=0, row=0, padx=5, pady=10)
-            button_forward = Button(frame_forwardAndBackward, text=">", font=txtFont, command= lambda: forward(label_page))
+            button_forward = Button(frame_forwardAndBackward, text=">", font=txtFont, command= lambda: forward(label_page), bg=btnColor, fg=fgColor)
             button_forward.grid(column=2, row=0, padx=5, pady=10)
 
         frame_mergeButton = Frame(windowNew)
         frame_mergeButton.grid(column=0, row=2)
         frame_mergeButton.configure(background=bgColor)
 
-        mergeButton = Button(frame_mergeButton, text="Zusammenführen", command= lambda: VideoCabin2.startMergeThread(windowNew, i_row, frame_mergeButton), font=txtFont)
+        mergeButton = Button(frame_mergeButton, text="Zusammenführen", command= lambda: VideoCabin2.startMergeThread(windowNew, i_row, frame_mergeButton), font=txtFont, bg=btnColor, fg=fgColor)
         mergeButton.grid(column = 0, row = 0, pady=20,padx=5)
 
-        backButton = Button(frame_mergeButton, text="Zurück zur Anleitung", font=txtFont, command= lambda: VideoCabin2.backToInstructions(windowNew))
+        backButton = Button(frame_mergeButton, text="Zurück zur Anleitung", font=txtFont, command= lambda: VideoCabin2.backToInstructions(windowNew), bg=btnColor, fg=fgColor)
         backButton.grid(column = 0, row = 1, pady=20, padx=5)
 
         windowNew.mainloop()
@@ -547,14 +548,14 @@ class VideoCabin2:
 
         textFont = ("Helvetica",28)
 
-        label_areYouSure = Label(areYouSureWindow, text="Sind Sie sicher dass Sie das Video löschen möchten?", font=textFont, wraplength=700)
+        label_areYouSure = Label(areYouSureWindow, text="Sind Sie sicher dass Sie das Video löschen möchten?", font=textFont, wraplength=700, fg=fgColor)
         label_areYouSure.place(in_=areYouSureWindow, anchor="c", relx=.5, rely=.2)
         label_areYouSure.configure(background=bgColor)
         
-        buttonFrame = Frame(areYouSureWindow)
+        buttonFrame = Frame(areYouSureWindow, bg=bgColor)
         buttonFrame.place(in_=areYouSureWindow, anchor="c", relx=.5, rely=.6)
-        button_cancel = Button(buttonFrame, text="Löschen", font=textFont, command= lambda: VideoCabin2.deleteConfirmed(file, windowOld, areYouSureWindow)).grid(row=0, padx=10, pady=10)
-        button_delete = Button(buttonFrame, text="Abbrechen", font=textFont, command= lambda: areYouSureWindow.destroy()).grid(row=1, padx=10, pady=10)
+        button_cancel = Button(buttonFrame, text="Löschen", font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabin2.deleteConfirmed(file, windowOld, areYouSureWindow)).grid(row=0, padx=10, pady=10)
+        button_delete = Button(buttonFrame, text="Abbrechen", font=textFont, bg=btnColor, fg=fgColor, command= lambda: areYouSureWindow.destroy()).grid(row=1, padx=10, pady=10)
 
     def deleteConfirmed(file, windowOld, youSureWindow):
         os.remove(file)
@@ -617,7 +618,7 @@ class VideoCabin2:
         frame2.configure(background=bgColor)
      
         frame2.place(in_=trimWindow, anchor="c", relx=.5, rely=.1)
-        playButton = Button(frame2, text="Vorschau", command= lambda: VideoCabin2.playVideo(file), font=txtFont)
+        playButton = Button(frame2, text="Vorschau", command= lambda: VideoCabin2.playVideo(file), font=txtFont, bg=btnColor, fg=fgColor)
         playButton.grid(column=1, row=0, padx=5,pady=5)
 
         frame3 = Frame(trimWindow, borderwidth=1)
@@ -638,21 +639,21 @@ class VideoCabin2:
 
         frame6 = Frame(trimWindow, borderwidth=1)
         frame6.place(in_=trimWindow, anchor="c", relx=.5, rely=.65)
-        button_previewTrim = Button(frame6, text="Vorschau zugeschnittenes Video", font=txtFont, state=DISABLED, command= lambda: VideoCabin2.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
+        button_previewTrim = Button(frame6, text="Vorschau zugeschnittenes Video", font=txtFont, bg=btnColor, fg=fgColor, state=DISABLED, command= lambda: VideoCabin2.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
         button_previewTrim.grid(column=0, row=0)
         frame6.configure(background=bgColor)
 
         frame7 = Frame(trimWindow, borderwidth=1)
         frame7.place(in_=trimWindow, anchor="c", relx=.5, rely=.8)
-        button_accept = Button(frame7, text="Zuschneiden bestätigen", state=DISABLED, font=txtFont, command= lambda: VideoCabin2.trimApply(trimWindow, file))
+        button_accept = Button(frame7, text="Zuschneiden bestätigen", state=DISABLED, font=txtFont, command= lambda: VideoCabin2.trimApply(trimWindow, file), bg=btnColor, fg=fgColor)
         button_accept.grid(column=0, row=0, padx=5)
-        button_cancel = Button(frame7, text="Cancel", font=txtFont, command= lambda: VideoCabin2.trimCancel(trimWindow, file))
+        button_cancel = Button(frame7, text="Abbrechen", font=txtFont, command= lambda: VideoCabin2.trimCancel(trimWindow, file), bg=btnColor, fg=fgColor)
         button_cancel.grid(column=1, row=0, padx=5)
         frame7.configure(background=bgColor)
 
         frame5 = Frame(trimWindow, borderwidth=1)
         frame5.place(in_=trimWindow, anchor="c", relx=.5, rely=.5)
-        button_trim = Button(frame5, text="Zuschneiden", font=txtFont, command= lambda: VideoCabin2.trimVideoFile(file, duration.get(), button_previewTrim, button_accept))
+        button_trim = Button(frame5, text="Zuschneiden", font=txtFont, command= lambda: VideoCabin2.trimVideoFile(file, duration.get(), button_previewTrim, button_accept), bg=btnColor, fg=fgColor)
         button_trim.grid(column=0, row=0)
         frame5.configure(background=bgColor)
 
