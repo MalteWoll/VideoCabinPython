@@ -26,10 +26,7 @@ from datetime import datetime
 
 # Important! In OBS, check 'Generate file name without space' in the output settings
 
-# Path is the path selected at the moment, initialPath is always the path at the start of the application
-
-# Previously path was read as command line argument, since the output folder is static, this has been replaced
-# path = str(sys.argv[1])
+# Path to the recorded video files from OBS
 path = "D:/obs_scripts/python/VideoSource"
 
 # The directory the output file is created at
@@ -43,6 +40,7 @@ fgColor = '#ffffff'
 
 initialPath = path
 
+# Variables for the pages of frames, in case the user records more than 12 video files
 frameCounter = 0
 filesInFrameCounter = 0
 pageCounter = 0
@@ -80,10 +78,9 @@ class VideoCabin2:
         translate_table = str.maketrans({' ': '_', ':': '_'})
         now = now.translate(translate_table)
 
+        # Create the unique output folder for the user, based on time and date
         now = now[:-7]
-
         outputFilePath = outputPath + "/Output_"+now
-
         os.mkdir(outputFilePath)
 
         print("Output file path: " + str(outputFilePath))
@@ -91,13 +88,11 @@ class VideoCabin2:
         return outputFilePath
 
     # Opens a file with the specified program, e.g. VLC
-    # TODO: Program path needs to be adjusted -> Maybe add a catch if the path does not exist, prompting the user to search for it?
     def playVideo(file):
-        # Debug
-        #print(str(file))
         p = subprocess.Popen(["D:/Program Files/VideoLAN/VLC/vlc.exe", "file:///"+str(file)])
 
     # Method for changing the working directory
+    # We do not use this anymore
     def getFolderPath(labelDirectory, labelVideoFiles):
         # Update path and label
         path = str(filedialog.askdirectory())
@@ -107,6 +102,7 @@ class VideoCabin2:
         labelVideoFiles.config(text=str(len(files)) + " video files found.")
 
     # Method for resetting the directory to the one the script has been called with
+    # We do not use this anymore
     def setInitialPath(labelDirectory, labelVideoFiles):
         # Update path and label
         path = initialPath
