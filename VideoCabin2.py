@@ -38,6 +38,9 @@ globalOutputFilePath = ""
 
 tempPath = "D:/obs_scripts/Python/Temp"
 
+bgColor = '#4c4c4c'
+fgColor = '#ffffff'
+
 initialPath = path
 
 frameCounter = 0
@@ -166,6 +169,7 @@ class VideoCabin2:
     def uploadPopup(outputFilePath):
         window = Toplevel()
         window.title("Upload")
+        window.configure(background=bgColor)
 
         # A lot of GUI stuff, asking for password, username and filename. Password is a censored field.
         # maybe TODO: Toggle for show password
@@ -226,6 +230,7 @@ class VideoCabin2:
         windowNew = Tk()
         windowNew.title("Video Cabin Merger - Upload")
         windowNew.attributes('-fullscreen', True)
+        windowNew.configure(background=bgColor)
 
         txtFont = ("Helvetica",20)
 
@@ -253,11 +258,14 @@ class VideoCabin2:
         windowMergeInProgress.geometry("800" + "x" + "400" + "+" + "600" + "+" + "250")
         windowMergeInProgress.grab_set()
         windowMergeInProgress.attributes('-disabled', True)
+        windowMergeInProgress.configure(background=bgColor)
 
         label_mergeInProgress = Label(windowMergeInProgress, text="Zusammenführen, bitte warten.", font=txtFont)
         label_mergeInProgress.place(in_=windowMergeInProgress, anchor="c", relx=.5, rely=.2)
+        label_mergeInProgress.configure(background=bgColor)
         label_mergeInProgress2 = Label(windowMergeInProgress, text="Dies kann einige Minuten dauern.", font=txtFont)
         label_mergeInProgress2.place(in_=windowMergeInProgress, anchor="c", relx=.5, rely=.4)
+        label_mergeInProgress2.configure(background=bgColor)
 
         threading.Thread(target= lambda: VideoCabin2.mergeFiles(windowOld, i_row, frame, windowMergeInProgress)).start()
 
@@ -342,11 +350,14 @@ class VideoCabin2:
 
         frame_text = Frame(windowOld)
         frame_text.grid(column=0, row=4)
+        frame_text.configure(background=bgColor)
 
         label_instruction = Label(frame_text, text="Wenn Sie unzufrieden mit dem Ergebnis sind, können Sie die Dateien erneut zusammenführen. Wenn nicht, drücken Sie auf \"Weiter\".", font=txtFont)
         label_instruction.grid(columnspan=5, row=0)
+        label_instruction.configure(background=bgColor)
         label_warning = Label(frame_text, text="Bitte beachten Sie, dass Sie nicht zu dieser Ansicht zurück können!", font=txtFont, fg="Red")
         label_warning.grid(columnspan=5, row=1)
+        label_warning.configure(background=bgColor)
 
 
     # Window for selecting the video files
@@ -363,7 +374,7 @@ class VideoCabin2:
         windowNew.title("Video Cabin Merge Manager - File Selection")
         windowNew.attributes('-fullscreen', True)
 
-        windowNew.configure(background='#4c4c4c')
+        windowNew.configure(background=bgColor)
 
         i = 0
         i_row = 0
@@ -436,12 +447,12 @@ class VideoCabin2:
             frame = Frame(frames[frameCounter], borderwidth=1, relief="solid")
             frame.grid(column=i_col, row=i_row)
 
-            frame.configure(background='#4c4c4c')
+            frame.configure(background=bgColor)
 
             label_fileName = Label(frame, text=os.path.basename(file), font=txtFont)
             label_fileName.grid(column=0, row=0, padx=5, pady=5)
 
-            label_fileName.configure(background='#4c4c4c')
+            label_fileName.configure(background=bgColor, fg='#ffffff')
 
             # Play button starts playing the file
             playButton = Button(frame, text="Vorschau", command= lambda file=file: VideoCabin2.playVideo(file), font=txtFont)
@@ -479,14 +490,13 @@ class VideoCabin2:
 
         frame_forwardAndBackward = Frame(windowNew)
         frame_forwardAndBackward.grid(column=0, row=1)
-        #frame_control = Frame(frame_forwardAndBackward)
-        #frame_control.place(in_=frame_forwardAndBackward, anchor="c", relx=.5, rely=.1)
+        frame_forwardAndBackward.configure(background=bgColor)
 
         # frameCounter: The total amount of frames created, 12 video files per frame, default 1 frame (framecounter = 0). For example, 23 video files will create 3 frames
         # pageCounter: The page we are currently on. If <= 12 files, only one page.
-
         label_page = Label(frame_forwardAndBackward, text="Seite " + str(pageCounter+1))
         label_page.grid(column=1, row=0, padx=5, pady=10)
+        label_page.configure(background=bgColor, fg=fgColor)
 
         def forward(label):
             global pageCounter
@@ -523,6 +533,7 @@ class VideoCabin2:
 
         frame_mergeButton = Frame(windowNew)
         frame_mergeButton.grid(column=0, row=2)
+        frame_mergeButton.configure(background=bgColor)
 
         mergeButton = Button(frame_mergeButton, text="Zusammenführen", command= lambda: VideoCabin2.startMergeThread(windowNew, i_row, frame_mergeButton), font=txtFont)
         mergeButton.grid(column = 0, row = 0, pady=20,padx=5)
@@ -536,11 +547,13 @@ class VideoCabin2:
         areYouSureWindow = Toplevel(windowOld)
         areYouSureWindow.geometry("800" + "x" + "400" + "+" + "600" + "+" + "250")
         areYouSureWindow.grab_set()
+        areYouSureWindow.configure(background=bgColor)
 
         textFont = ("Helvetica",28)
 
         label_areYouSure = Label(areYouSureWindow, text="Sind Sie sicher dass Sie das Video löschen möchten?", font=textFont, wraplength=700)
         label_areYouSure.place(in_=areYouSureWindow, anchor="c", relx=.5, rely=.2)
+        label_areYouSure.configure(background=bgColor)
         
         buttonFrame = Frame(areYouSureWindow)
         buttonFrame.place(in_=areYouSureWindow, anchor="c", relx=.5, rely=.6)
@@ -597,6 +610,7 @@ class VideoCabin2:
     def trimVideoFileWindow(file, i, windowOld):
         trimWindow = Toplevel(windowOld)
         trimWindow.geometry(str(960) + "x" + str(520) + "+" +  str(480) + "+" + str(270))
+        trimWindow.configure(background=bgColor)
 
         txtFont = ("Helvetica",20)
 
@@ -604,6 +618,7 @@ class VideoCabin2:
         trimWindow.grab_set()
 
         frame2 = Frame(trimWindow, borderwidth=1)
+        frame2.configure(background=bgColor)
      
         frame2.place(in_=trimWindow, anchor="c", relx=.5, rely=.1)
         playButton = Button(frame2, text="Vorschau", command= lambda: VideoCabin2.playVideo(file), font=txtFont)
@@ -611,19 +626,25 @@ class VideoCabin2:
 
         frame3 = Frame(trimWindow, borderwidth=1)
         frame3.place(in_=trimWindow, anchor="c", relx=.5, rely=.3)
+        frame3.configure(background=bgColor)
 
         duration = StringVar(trimWindow)
         spinbox = Spinbox(frame3, from_=0, to = 10, width=3, font=('Helvetica', 40), textvariable=duration)
         spinbox.grid(column=0, row=0)
+        spinbox.configure(background=bgColor, fg=fgColor)
 
         frame4 = Frame(trimWindow, borderwidth=1)
         frame4.place(in_=trimWindow, anchor="c", relx=.5, rely=.4)
-        label_trimTimeText = Label(frame4, text="Sekunden am Ende des Videos abschneiden", font=txtFont).grid(column=1, row=2)
+        label_trimTimeText = Label(frame4, text="Sekunden am Ende des Videos abschneiden", font=txtFont)
+        label_trimTimeText.grid(column=1, row=2)
+        label_trimTimeText.configure(background=bgColor, fg=fgColor)
+        frame4.configure(background=bgColor)
 
         frame6 = Frame(trimWindow, borderwidth=1)
         frame6.place(in_=trimWindow, anchor="c", relx=.5, rely=.65)
         button_previewTrim = Button(frame6, text="Vorschau zugeschnittenes Video", font=txtFont, state=DISABLED, command= lambda: VideoCabin2.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
         button_previewTrim.grid(column=0, row=0)
+        frame6.configure(background=bgColor)
 
         frame7 = Frame(trimWindow, borderwidth=1)
         frame7.place(in_=trimWindow, anchor="c", relx=.5, rely=.8)
@@ -631,11 +652,13 @@ class VideoCabin2:
         button_accept.grid(column=0, row=0, padx=5)
         button_cancel = Button(frame7, text="Cancel", font=txtFont, command= lambda: VideoCabin2.trimCancel(trimWindow, file))
         button_cancel.grid(column=1, row=0, padx=5)
+        frame7.configure(background=bgColor)
 
         frame5 = Frame(trimWindow, borderwidth=1)
         frame5.place(in_=trimWindow, anchor="c", relx=.5, rely=.5)
         button_trim = Button(frame5, text="Zuschneiden", font=txtFont, command= lambda: VideoCabin2.trimVideoFile(file, duration.get(), button_previewTrim, button_accept))
         button_trim.grid(column=0, row=0)
+        frame5.configure(background=bgColor)
 
 
 
