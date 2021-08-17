@@ -14,6 +14,7 @@ import glob
 # subprocess and os for operating system operations
 import subprocess
 import os
+import shutil
 
 # owncloud for upload to sciebo
 import owncloud
@@ -32,6 +33,7 @@ path = "D:/obs_scripts/python/VideoSource"
 # The directory the output file is created at
 outputPath = "D:/obs_scripts/Python/Output"
 globalOutputFilePath = ""
+outputFilePath = ""
 
 tempPath = "D:/obs_scripts/Python/Temp"
 
@@ -74,6 +76,8 @@ class VideoCabin2:
 
     # Creates an output folder with the current date and time, so every output is saved
     def createOutputFolder():
+        global outputFilePath
+
         # Since creating a directory with spaces is not possible with os.mkdir, spaces need to be turned into underscores
         now = str(datetime.now())
         translate_table = str.maketrans({' ': '_', ':': '_'})
@@ -172,39 +176,39 @@ class VideoCabin2:
         # maybe TODO: Toggle for show password
 
         # Row 0
-        label_username = Label(window, text="Nutzername:")
+        label_username = Label(window, text="Nutzername:", fg=fgColor, bg=bgColor)
         label_username.grid(column=0, row=0, padx=5, pady=5)
 
         entry_username = Entry(window, width=30)
         entry_username.grid(column=1, row=0, padx=5, pady=5)
         
         # Row 1
-        label_password = Label(window, text="Passwort:")
+        label_password = Label(window, text="Passwort:", fg=fgColor, bg=bgColor)
         label_password.grid(column=0, row=1, padx=5, pady=5)
 
         entry_password = Entry(window, show="*", width=30)
         entry_password.grid(column=1, row=1, padx=5, pady=5)
 
         # Row 2
-        label_filename = Label(window, text="Dateiname:")
+        label_filename = Label(window, text="Dateiname:", fg=fgColor, bg=bgColor)
         label_filename.grid(column=0, row=2, padx=5, pady=5)
 
         entry_filename = Entry(window, width=30)
         entry_filename.grid(column=1, row=2, padx=5, pady=5)
 
         # Row 3
-        label_hintUpload = Label(window, text="Die Datei wird zum Hauptverzeichnis Ihres Sciebo Accounts hochgeladen, mit dem Dateinamen den Sie angegeben haben.")
+        label_hintUpload = Label(window, text="Die Datei wird zum Hauptverzeichnis Ihres Sciebo Accounts hochgeladen, mit dem Dateinamen den Sie angegeben haben.", fg=fgColor, bg=bgColor)
         label_hintUpload.grid(row=3, columnspan=2, padx=5, pady=5)
 
         # Row 4
-        label_hintUpload = Label(window, text="")
+        label_hintUpload = Label(window, text="", bg=bgColor)
         label_hintUpload.grid(row=4, columnspan=2, padx=5, pady=5)
 
         # Row 5
-        button_loginSciebo = Button(window, text="Upload", command=lambda: VideoCabin2.uploadToSciebo(entry_username.get(), entry_password.get(), entry_filename.get(), window, outputFilePath))
+        button_loginSciebo = Button(window, text="Upload", command=lambda: VideoCabin2.uploadToSciebo(entry_username.get(), entry_password.get(), entry_filename.get(), window, outputFilePath), bg=btnColor, fg=fgColor)
         button_loginSciebo.grid(column=1, row=5, pady=5, padx=5)
 
-        button_cancel = Button(window, text="Cancel", command= lambda: window.destroy())
+        button_cancel = Button(window, text="Cancel", command= lambda: window.destroy(), bg=btnColor, fg=fgColor)
         button_cancel.grid(column=0, row=5, pady=5, padx=5)
 
         window.mainloop()
@@ -212,7 +216,7 @@ class VideoCabin2:
     # Copy output file to connected USB flash drive. For now, the drive must be specified beforehand -> This should be ok, since it should not change on the computer the script runs on
     def copyToDrive(outputFilePath):
         # TODO: Find path? Prompt user to find path?
-        drivePath = "E:"
+        drivePath = "G:"
         copyfile(outputFilePath+"/output.mkv",drivePath+"/output.mkv")
 
     # Open the directory with the output file
@@ -232,14 +236,34 @@ class VideoCabin2:
         txtFont = ("Helvetica",20)
 
         # Buttons for upload, copying and showing in explorer
-        button_upload = Button(text="Dateiupload zu Ihrem Sciebo Account @sciebo.th-koeln.de", command= lambda: VideoCabin2.uploadPopup(outputFilePath), font=txtFont).grid(column=0, row=0, padx=20, pady=15)
-        button_copyToDrive = Button(text="Ausgabedatei auf einen angeschlossenen USB Stick kopieren", command= lambda: VideoCabin2.copyToDrive(outputFilePath), font=txtFont).grid(column=0, row=1, padx=20,pady=15)
-        button_showInExplorer = Button(text="Ausgabedatei im Explorer anzeigen", font=txtFont,command= lambda: VideoCabin2.openOutputDir(outputFilePath)).grid(column=0,row=2, pady=15, padx=20)
+        button_upload = Button(text="Dateiupload zu Ihrem Sciebo Account @sciebo.th-koeln.de", command= lambda: VideoCabin2.uploadPopup(outputFilePath), font=txtFont, bg=btnColor, fg=fgColor).grid(column=0, row=0, padx=20, pady=15)
+        button_copyToDrive = Button(text="Ausgabedatei auf einen angeschlossenen USB Stick kopieren", command= lambda: VideoCabin2.copyToDrive(outputFilePath), font=txtFont, bg=btnColor, fg=fgColor).grid(column=0, row=1, padx=20,pady=15)
+        button_showInExplorer = Button(text="Ausgabedatei im Explorer anzeigen", font=txtFont,command= lambda: VideoCabin2.openOutputDir(outputFilePath), bg=btnColor, fg=fgColor).grid(column=0,row=2, pady=15, padx=20)
+        button_deleteEverything = Button(text="Videodateien und zusammengeführtes Video löschen", command= lambda: VideoCabin2.deleteEverythingCheck(windowNew), font=txtFont, bg="red", fg=fgColor).grid(column=0, row=3, padx=15, pady=30)
 
         # Exit button
-        button_exit = Button(text="Beenden", command= lambda: windowNew.destroy(), font=txtFont).grid(column=0, row=3, pady=40)
+        button_exit = Button(text="Beenden", command= lambda: windowNew.destroy(), font=txtFont, bg=btnColor, fg=fgColor).grid(column=0, row=4, pady=40)
 
         windowNew.mainloop()
+
+    def deleteEverythingCheck(windowOld):
+        deleteWindow = Toplevel(windowOld)
+        deleteWindow.geometry(str(960) + "x" + str(520) + "+" +  str(480) + "+" + str(270))
+        deleteWindow.configure(background=bgColor)
+        txtFont = ("Helvetica",20)
+
+        label_areYouSure = Label(deleteWindow, text="Alle Dateien werden permanent von diesem Computer gelöscht. Bitte stellen Sie sicher, dass Sie Ihre Daten exportiert haben.", wraplength=800, font=txtFont, bg=bgColor, fg=fgColor).grid(column=0, row=0, pady=15)
+        label_areYouSure2 = Label(deleteWindow, text="Sind Sie sicher, dass Sie alle Dateien löschen wollen?", font=txtFont, wraplength=800, bg=bgColor, fg=fgColor).grid(column=0, row=1, pady=15)
+
+        btn_confirm = Button(deleteWindow, text="Löschen", font=txtFont, bg="red", fg=fgColor, command= lambda: VideoCabin2.deleteEverything(deleteWindow)).grid(column=0, row=2, padx=5, pady=20)
+        btn_cancel = Button(deleteWindow, text="Abbrechen", font=txtFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabin2.cancelDeleteEverything(deleteWindow)).grid(column=0, row=3, padx=5, pady=20)
+
+    def deleteEverything(windowOld):
+        shutil.rmtree(outputFilePath)
+        windowOld.destroy()
+
+    def cancelDeleteEverything(windowOld):
+        windowOld.destroy()
 
     # Simple messagebox asking if the user is sure they want to continue
     def areYouSure(windowOld, outputFilePath):
@@ -257,10 +281,10 @@ class VideoCabin2:
         windowMergeInProgress.attributes('-disabled', True)
         windowMergeInProgress.configure(background=bgColor)
 
-        label_mergeInProgress = Label(windowMergeInProgress, text="Zusammenführen, bitte warten.", font=txtFont)
+        label_mergeInProgress = Label(windowMergeInProgress, text="Zusammenführen, bitte warten.", font=txtFont, fg=fgColor)
         label_mergeInProgress.place(in_=windowMergeInProgress, anchor="c", relx=.5, rely=.2)
         label_mergeInProgress.configure(background=bgColor)
-        label_mergeInProgress2 = Label(windowMergeInProgress, text="Dies kann einige Minuten dauern.", font=txtFont)
+        label_mergeInProgress2 = Label(windowMergeInProgress, text="Dies kann einige Minuten dauern.", font=txtFont, fg=fgColor)
         label_mergeInProgress2.place(in_=windowMergeInProgress, anchor="c", relx=.5, rely=.4)
         label_mergeInProgress2.configure(background=bgColor)
 
@@ -339,20 +363,20 @@ class VideoCabin2:
 
         windowPopup.destroy()
 
-        button_playOutput = Button(frame, text="Zusammengeführte Datei abspielen", command= lambda: VideoCabin2.playVideo(outputFilePath+"/output.mkv"), font=txtFont)
+        button_playOutput = Button(frame, text="Zusammengeführte Datei abspielen", command= lambda: VideoCabin2.playVideo(outputFilePath+"/output.mkv"), font=txtFont, bg=btnColor, fg=fgColor)
         button_playOutput.grid(column=0, row=2, pady=10, padx=10)
 
-        button_continue = Button(frame, text="Weiter", font=txtFont, command= lambda: VideoCabin2.areYouSure(windowOld, outputFilePath))
+        button_continue = Button(frame, text="Weiter", font=txtFont, command= lambda: VideoCabin2.areYouSure(windowOld, outputFilePath), bg=btnColor, fg=fgColor)
         button_continue.grid(column=0,row=3, pady=20)
 
         frame_text = Frame(windowOld)
         frame_text.grid(column=0, row=4)
         frame_text.configure(background=bgColor)
 
-        label_instruction = Label(frame_text, text="Wenn Sie unzufrieden mit dem Ergebnis sind, können Sie die Dateien erneut zusammenführen. Wenn nicht, drücken Sie auf \"Weiter\".", font=txtFont)
+        label_instruction = Label(frame_text, text="Wenn Sie unzufrieden mit dem Ergebnis sind, können Sie die Dateien erneut zusammenführen. Wenn nicht, drücken Sie auf \"Weiter\".", font=txtFont, fg=fgColor)
         label_instruction.grid(columnspan=5, row=0)
         label_instruction.configure(background=bgColor)
-        label_warning = Label(frame_text, text="Bitte beachten Sie, dass Sie nicht zu dieser Ansicht zurück können!", font=txtFont, fg="Red")
+        label_warning = Label(frame_text, text="Bitte beachten Sie, dass Sie nicht zu dieser Ansicht zurückkehren können!", font=txtFont, fg="Red")
         label_warning.grid(columnspan=5, row=1)
         label_warning.configure(background=bgColor)
 
