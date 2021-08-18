@@ -346,7 +346,7 @@ class VideoCabinInstructions:
     def playVideo(file):
         # Debug
         #print(str(file))
-        p = subprocess.Popen(["D:/Program Files/VideoLAN/VLC/vlc.exe", "file:///"+str(file)])
+        p = subprocess.Popen([videoPlayerDir, "file:///"+str(file)])
 
     # Window for reviewing the last clip recorded and to delete it, if needed
     def fileControl(windowOld):

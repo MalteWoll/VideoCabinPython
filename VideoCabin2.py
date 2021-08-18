@@ -36,6 +36,7 @@ globalOutputFilePath = ""
 outputFilePath = ""
 
 tempPath = "D:/obs_scripts/Python/Temp"
+vlcPath = "D:/Program Files/VideoLAN/VLC/vlc.exe"
 
 bgColor = '#1e1e1e'
 btnColor = '#4c4c4c'
@@ -94,7 +95,7 @@ class VideoCabin2:
 
     # Opens a file with the specified program, e.g. VLC
     def playVideo(file):
-        p = subprocess.Popen(["D:/Program Files/VideoLAN/VLC/vlc.exe", "file:///"+str(file)])
+        p = subprocess.Popen([vlcPath, "file:///"+str(file)])
 
     # Method for changing the working directory
     # We do not use this anymore
@@ -465,7 +466,7 @@ class VideoCabin2:
             filesInFrameCounter += 1
 
             # One frame object contains the name of the clip, a button to view the clip (for example in VLC) and a button to add or remove a clip from the list of clips
-            frame = Frame(frames[frameCounter], borderwidth=1, relief="solid")
+            frame = Frame(frames[frameCounter], borderwidth=1, relief="solid", highlightbackground=fgColor, highlightcolor=fgColor, highlightthickness=1)
             frame.grid(column=i_col, row=i_row)
 
             frame.configure(background=bgColor)
