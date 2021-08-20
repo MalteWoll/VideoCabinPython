@@ -107,7 +107,11 @@ textCameraOn2 = "Zusätzlich muss der Live View eingeschaltet werden. Drücken S
 
 textLaptop1 = "Platzieren Sie Ihren Laptop auf dem Dafür vorgesehenen Platz, unterhalb der Kamera. Stellen Sie sicher, dass der Bildschirm nicht die Kamera blockiert."
 textLaptop2 = "Verbinden Sie den Laptop mit dem dafür vorgesehenen HDMI Kabel. Wenn Ihr Laptop keinen Anschluss für HDMI hat, benutzen Sie einen der bereitgelegten Adapter."
-textLaptop3 = "Starten Sie PowerPoint. Der Bildschirm muss zuerst erweitert werden. Klicken Sie dafür auf dem Laptop auf das Sprechblasen Symbol in der unteren rechten Ecke des Bildschirms."
+
+textCheckOBS = "Auf dem rechten Monitor sollte nun der Desktophintergrund ihres Laptops zu sehen sein. Falls der Monitor schwarz bleibt, drücken Sie bitte auf den Button um die Aufnahmesoftware neuzustarten."
+textCheckOBS2 = "Wenn der rechte Monitor nicht mehr schwarz ist, drücken Sie wie gewohnt auf \"Weiter\""
+
+textLaptop3 = "Der Bildschirm muss zunächst erweitert werden. Klicken Sie dafür auf dem Laptop auf das Sprechblasen Symbol in der unteren rechten Ecke des Bildschirms."
 textLaptop4 = "Klicken Sie dann auf den Button \"Projizieren\" am unteren Rand des Bildschirms (siehe unten). Wenn der Button nicht angezeigt wird, klicken Sie zuerst auf \"Erweitern\"."
 textLaptop5 = "Klicken Sie dann auf \"Erweitern\" (siehe Bild)."
 
@@ -164,14 +168,15 @@ class VideoCabinInstructions:
                    4: VideoCabinInstructions.instructions_laptop1,
                    5: VideoCabinInstructions.instructions_laptop2,
                    6: VideoCabinInstructions.instructions_laptop3,
-                   7: VideoCabinInstructions.instructions_presenter,
-                   8: VideoCabinInstructions.instructions_recordControl1,
-                   9: VideoCabinInstructions.instructions_recordControl2,
-                   10: VideoCabinInstructions.instructions_recordControl3,
-                   11: VideoCabinInstructions.instructions_recordControl4,
-                   12: VideoCabinInstructions.instructions_audioLevel,
-                   13: VideoCabinInstructions.instructions_recording,
-                   14: VideoCabinInstructions.fileControl}
+                   7: VideoCabinInstructions.instructions_checkOBS,
+                   8: VideoCabinInstructions.instructions_presenter,
+                   9: VideoCabinInstructions.instructions_recordControl1,
+                   10: VideoCabinInstructions.instructions_recordControl2,
+                   11: VideoCabinInstructions.instructions_recordControl3,
+                   12: VideoCabinInstructions.instructions_recordControl4,
+                   13: VideoCabinInstructions.instructions_audioLevel,
+                   14: VideoCabinInstructions.instructions_recording,
+                   15: VideoCabinInstructions.fileControl}
         
         # To use the variable, we need to clarify that it is a global one
         global orderControlCounter
@@ -502,6 +507,33 @@ class VideoCabinInstructions:
 
         button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
         button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
+
+    def restartOBS():
+        # First, kill the OBS process
+        os.system("taskkill /f /im obs64.exe")
+        # Wait one second to make sure it's killed
+        time.sleep(1)
+        # Restart OBS
+        VideoCabinInstructions.startOBS()
+
+    def instructions_checkOBS(windowOld):
+        if(windowOld is not None):
+            windowOld.destroy()
+
+        windowNew = tk.Tk()
+        windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
+        windowNew.title("Check OBS")
+        textFont = (textFontStyle,textFontSize)
+
+        label_checkOBS1 = Label(windowNew, text=textCheckOBS, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+
+        button_restartOBS = Button(windowNew, text="Neustart Aufnahmesoftware", font=textFont, command=VideoCabinInstructions.restartOBS)
+        button_restartOBS.grid(row=1, padx=paddingX, pady=paddingY)
+
+        label_checkOBS2 = Label(windowNew, text=textCheckOBS2, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
 
     def instructions_laptop2(windowOld):
         if(windowOld is not None):
