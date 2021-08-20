@@ -28,15 +28,19 @@ from datetime import datetime
 # Important! In OBS, check 'Generate file name without space' in the output settings
 
 # Path to the recorded video files from OBS
-path = "D:/obs_scripts/python/VideoSource"
+path = "D:/obs_scripts/python/videoSource"
+path2 = "C:/Users/Video-Selfie/Videos/VideoCabinFiles"
 
 # The directory the output file is created at
-outputPath = "D:/obs_scripts/Python/Output"
+outputPath = "D:/obs_scripts/python/Output"
+outputPath2 = "C:/Users/Video-Selfie/Videos/Output"
 globalOutputFilePath = ""
 outputFilePath = ""
 
-tempPath = "D:/obs_scripts/Python/Temp"
 vlcPath = "D:/Program Files/VideoLAN/VLC/vlc.exe"
+vlcPath2 = "C:/Program Files/VideoLAN/VLC/vlc.exe"
+
+instructionsPath = "python D:/GitHub/VideoCabinPython/VideoCabinInstructions.py"
 
 bgColor = '#1e1e1e'
 btnColor = '#4c4c4c'
@@ -73,7 +77,7 @@ class VideoCabin2:
 
     def backToInstructions(windowOld):
         windowOld.destroy()
-        os.system("python D:/GitHub/VideoCabinPython/VideoCabinInstructions.py")
+        os.system(instructionsPath)
 
     # Creates an output folder with the current date and time, so every output is saved
     def createOutputFolder():

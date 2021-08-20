@@ -25,6 +25,8 @@ from datetime import datetime
 # for screen information
 import screeninfo
 
+import time
+
 # for window positioning, these need to be set to the appropriate resolution
 desktopResolutionX = 1920
 desktopResolutionY = 1080
@@ -34,7 +36,7 @@ windowWidth = int(desktopResolutionX / 2.5)
 windowHeight = desktopResolutionY
 
 # these parameters need to be set to place the window where we want it to be
-windowPositionX = 0 - windowWidth
+windowPositionX = 0 + 1920 - windowWidth
 windowPositionY = 0
 
 # counter variable for controlling the order in which instructional windows are opened up
@@ -42,16 +44,24 @@ orderControlCounter = 0
 
 # Path to video files
 videoFileDir = "D:/obs_scripts/python/videoSource"
+videoFileDir2 = "C:/Users/Video-Selfie/Videos/VideoCabinFiles"
 
 # Path to images files
 imageFilesDir = "C:/Users/malte/OneDrive/Bilder/GUIimages"
+imageFilesDir2 = "C:/Users/Video-Selfie/Videos/GUIimages"
 
 # Path to the .exe of the video player to be used
 videoPlayerDir = "D:/Program Files/VideoLAN/VLC/vlc.exe"
+videoPlayerDir2 = "C:/Program Files/VideoLAN/VLC/vlc.exe"
 
 # Path to OBS
 obsDir = "D:/Program Files/obs-studio/bin/64bit"
 obsDirExe = "D:/Program Files/obs-studio/bin/64bit/obs64.exe"
+obsDir2 = "C:/Program Files/obs-studio/bin/64bit"
+obsDirExe2 = "C:/Program Files/obs-studio/bin/64bit/obs64.exe"
+
+mergerDir = "D:/GitHub/VideoCabinPython/VideoCabin2.py"
+mergerDir2 = "C:/Users/Video-Selfie/Videos/VideoCabin2.py"
 
 # Image file paths
 imagePathPhantomPower1 = imageFilesDir + "/phantomPower1.jpg"
@@ -66,6 +76,15 @@ imagePathAudio2 = imageFilesDir + "/audioLevel2.jpg"
 imagePathExtendMonitor = imageFilesDir + "/notifications.jpg"
 imagePathProject = imageFilesDir + "/project.jpg"
 imagePathProject2 = imageFilesDir + "/project2.jpg"
+imagePathBauchbinde = imageFilesDir + "/bauchbinde.jpg"
+imagePathBauchbindeButton = imageFilesDir + "/bauchbinde_button.jpg"
+imagePathRecordButton = imageFilesDir + "/record_button.jpg"
+imagePathPiPButton = imageFilesDir + "/PiP_button.jpg"
+imagePathPiP2Button = imageFilesDir + "/PiP_button2.jpg"
+imagePathPresLargeButton = imageFilesDir + "/presLarge_button.jpg"
+imagePathPresSmallButton = imageFilesDir + "/presSmall_button.jpg"
+imagePathBackgroundButton = imageFilesDir + "/background_button.jpg"
+imagePathBackgrounds = imageFilesDir + "/backgrounds.jpg"
 
 # Some parameters for formatting text
 labelWrapLength = windowWidth-100
@@ -97,12 +116,16 @@ textPresenter2 = "Verbinden Sie den USB Anschluss mit einem der USB Ports Ihres 
 textPresenter3 = "Starten Sie Powerpoint auf Ihrem Laptop und starten Sie Ihre Präsentation. Sie können nun mit dem Presenter vor und zurück in Ihren Folien gehen."
 
 textRecordControl1 = "Mit den Buttons auf der linken Bilschirmseite können Sie die Aufnahme kontrollieren. Geben Sie bitte zuerst Ihren Namen (und/oder Fakultät oder andere Informationen) ein, wenn Sie diese(n) in der Präsentation als Bauchbinde anzeigen lassen wollen."
-textRecordControl2 = "Sie können zwischen drei Szenen auswählen, im Folgenden erhalten Sie einen Überblick über diese."
-textRecordControl3 = "Mit dem ersten Button, \"Fullscreen\", wird nur die Präsentation angezeigt, ohne dass Sie zu sehen sind."
-textRecordControl4 = "Mit dem zweiten Button, \"Totale\", wird die Präsentation auf dem Fernseher hinter Ihnen angezeigt, während Sie daneben stehen."
-textRecordControl5 = "Mit dem dritten Button, \"PiP\", wird eine Bild-im-Bild Präsentation angezeigt, dabei sind die Folien im Vollbild und Sie werden in einem kleinen Fenster in der oberen Ecke angezeigt."
+textRecordControl2 = "Sie können zwischen fünf Szenen auswählen, im Folgenden erhalten Sie einen Überblick über diese."
+textRecordControl3 = "Mit dem ersten Button, \"Picture in Picture 1\", werden Sie in groß angezeigt, während die Präsentation in einem Fenster daneben gezeigt wird."
+textRecordControl4 = "Mit dem zweiten Button, \"Picture in Picture 2\", wird die Präsentation in groß angezeigt, während Sie in einem kleinen Fenster in der oberen Ecke des Bildes zu sehen sind."
+textRecordControl5 = "Mit dem dritten Button, \"Präsentation groß\", wird die Präsentation in groß auf dem Fernseher hinter Ihnen angezeigt."
 textRecordControl6 = "Probieren Sie die verschiedenen Szenen aus um herauszufinden, welche am Besten zu Ihrer Präsentation passt. Sie können diese natürlich jederzeit umstellen."
 textRecordControl7 = "Wenn Sie Ihren Namen per Bauchbinde einblenden wollen, drücken Sie auf den Button der unter diesem Text beispielhaft angezeigt wird. Die Bauchbinde wird 5 Sekunden angezeigt und verschwindet dann wieder."
+textRecordControl8 = "Mit dem vierten Button, \"Präsentation klein\", wird die Präsentation in etwas verkleinerter Größe hinter Ihnen angezeigt, sodass Sie sie möglichst nicht verdecken."
+textRecordControl9 = "Mit dem letzten der fünf Buttons, \"Hintergrund\", wird lediglich ein Hintergrund auf dem Fernseher angezeigt, vor dem Sie stehen. Das ist sinnvoll, wenn Sie keine Präsentation abspielen wollen."
+
+textRecordControl10 = "Sie können außerdem zwischen drei Hintergründen wählen. Diese wählen Sie, wie unten abgebildet, in der letzten Reihe der Buttons aus."
 
 textAudioInstructions1 = "Stellen Sie sich aufrecht auf die Markierung auf dem Boden, als würden Sie präsentieren, und reden Sie in normaler Lautstärke. Überprüfen Sie die Lautstärke auf dem linken Monitor (siehe Bild). Das Lautstärkelevel sollte im gelben Bereich liegen."
 textAudioInstructions2 = "Wenn die Lautstärke im grünen Bereich liegt, drehen Sie den Knopf auf dem Audio Interface im Uhrzeigersinn (siehe Bild) und reden Sie erneut in normaler Lautstärke. Liegt die Lautstärke im roten Bereich, drehen Sie den Knopf gegen den Uhrzeigersinn."
@@ -145,9 +168,10 @@ class VideoCabinInstructions:
                    8: VideoCabinInstructions.instructions_recordControl1,
                    9: VideoCabinInstructions.instructions_recordControl2,
                    10: VideoCabinInstructions.instructions_recordControl3,
-                   11: VideoCabinInstructions.instructions_audioLevel,
-                   12: VideoCabinInstructions.instructions_recording,
-                   13: VideoCabinInstructions.fileControl}
+                   11: VideoCabinInstructions.instructions_recordControl4,
+                   12: VideoCabinInstructions.instructions_audioLevel,
+                   13: VideoCabinInstructions.instructions_recording,
+                   14: VideoCabinInstructions.fileControl}
         
         # To use the variable, we need to clarify that it is a global one
         global orderControlCounter
@@ -210,7 +234,7 @@ class VideoCabinInstructions:
     def startMergeControl(windowOld):
         if(windowOld is not None):
             windowOld.destroy()
-        os.system("python D:/GitHub/VideoCabinPython/VideoCabin2.py")
+        os.system("python " + mergerDir)
 
     @staticmethod
     def startOBS():
@@ -304,12 +328,26 @@ class VideoCabinInstructions:
         button_trim.grid(column=0, row=0)
 
     def trimCancel(windowOld, file):
+        # Check if the file is still opened in VLC and if yes, kill the process to make sure the file can be renamed
+        try:
+            os.system("taskkill /f /im vlc.exe")
+        except:
+            print("VLC was not running, no need to kill process.")
+        # To make sure the process has been killed before continuing, we freeze the application for a second
+        time.sleep(1)
         # Check if a trim file has been created and if yes, delete it, then close the window
         if(os.path.isfile(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))):
             os.remove(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))
         windowOld.destroy()
 
     def trimApply(windowOld, file):
+        # Check if the file is still opened in VLC and if yes, kill the process to make sure the file can be renamed
+        try:
+            os.system("taskkill /f /im vlc.exe")
+        except:
+            print("VLC was not running, no need to kill process.")
+        # To make sure the process has been killed before continuing, we freeze the application for a second
+        time.sleep(1)
         # To be sure, check for the file
         if(os.path.isfile(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))):
             # If it is there, remove the old file and rename the new file
@@ -547,10 +585,16 @@ class VideoCabinInstructions:
 
         label_recordControl1 = Label(windowNew, text=textRecordControl1, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
-        label_recordControl2 = Label(windowNew, text=textRecordControl2, font=textFont, wraplength=labelWrapLength).grid(row=1, padx=paddingX, pady=paddingY)
+        img_bauchbinde = VideoCabinInstructions.resizeImg(Image.open(imagePathBauchbinde), 1.5)
+        img_bauchbinde = ImageTk.PhotoImage(img_bauchbinde)
+        label_img_bauchbinde = Label(windowNew, image=img_bauchbinde)
+        label_img_bauchbinde.grid(row=1, padx=paddingX, pady=paddingY)
+        label_img_bauchbinde.image = img_bauchbinde
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        label_recordControl2 = Label(windowNew, text=textRecordControl2, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
 
     def instructions_recordControl2(windowOld):
         if(windowOld is not None):
@@ -563,12 +607,30 @@ class VideoCabinInstructions:
 
         label_recordControl3 = Label(windowNew, text=textRecordControl3, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
-        label_recordControl4 = Label(windowNew, text=textRecordControl4, font=textFont, wraplength=labelWrapLength).grid(row=1, padx=paddingX, pady=paddingY)
+        img_pip1 = VideoCabinInstructions.resizeImg(Image.open(imagePathPiPButton), 6)
+        img_pip1 = ImageTk.PhotoImage(img_pip1)
+        label_img_pip1 = Label(windowNew, image=img_pip1)
+        label_img_pip1.grid(row=1, padx=paddingX, pady=paddingY)
+        label_img_pip1.image = img_pip1
 
-        label_recordControl5 = Label(windowNew, text=textRecordControl5, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_recordControl4 = Label(windowNew, text=textRecordControl4, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
+        img_pip2 = VideoCabinInstructions.resizeImg(Image.open(imagePathPiP2Button), 6)
+        img_pip2 = ImageTk.PhotoImage(img_pip2)
+        label_img_pip2 = Label(windowNew, image=img_pip2)
+        label_img_pip2.grid(row=3, padx=paddingX, pady=paddingY)
+        label_img_pip2.image = img_pip2
+
+        label_recordControl5 = Label(windowNew, text=textRecordControl5, font=textFont, wraplength=labelWrapLength).grid(row=4, padx=paddingX, pady=paddingY)
+
+        img_presLarge = VideoCabinInstructions.resizeImg(Image.open(imagePathPresLargeButton), 6)
+        img_presLarge = ImageTk.PhotoImage(img_presLarge)
+        label_img_presLarge = Label(windowNew, image=img_presLarge)
+        label_img_presLarge.grid(row=5, padx=paddingX, pady=paddingY)
+        label_img_presLarge.image = img_presLarge
+
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
 
     def instructions_recordControl3(windowOld):
         if(windowOld is not None):
@@ -585,6 +647,19 @@ class VideoCabinInstructions:
 
         button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
         button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+
+    def instructions_recordControl4(windowOld):
+        if(windowOld is not None):
+            windowOld.destroy()
+
+        windowNew = tk.Tk()
+        windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
+        windowNew.title("Record Control 2")
+        textFont = (textFontStyle,textFontSize)
+
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+
 
     def instructions_audioLevel(windowOld):
         if(windowOld is not None):
