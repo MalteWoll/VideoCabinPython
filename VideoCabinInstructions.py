@@ -85,6 +85,11 @@ imagePathPresLargeButton = imageFilesDir + "/presLarge_button.jpg"
 imagePathPresSmallButton = imageFilesDir + "/presSmall_button.jpg"
 imagePathBackgroundButton = imageFilesDir + "/background_button.jpg"
 imagePathBackgrounds = imageFilesDir + "/backgrounds.jpg"
+imagePathPiP1 = imageFilesDir + "/scene_PiP1.jpg"
+imagePathPiP2 = imageFilesDir + "/scene_PiP2.jpg"
+imagePathPresLarge = imageFilesDir + "/scene_presLarge.jpg"
+imagePathPresSmall = imageFilesDir + "/scene_presSmall.jpg"
+imagePathBackground = imageFilesDir + "/scene_backGround.jpg"
 
 # Some parameters for formatting text
 labelWrapLength = windowWidth-100
@@ -119,8 +124,8 @@ textPresenter1 = "Nehmen Sie den Presenter und schieben Sie den USB Anschluss he
 textPresenter2 = "Verbinden Sie den USB Anschluss mit einem der USB Ports Ihres Laptops."
 textPresenter3 = "Starten Sie Powerpoint auf Ihrem Laptop und starten Sie Ihre Präsentation. Sie können nun mit dem Presenter vor und zurück in Ihren Folien gehen."
 
-textRecordControl1 = "Mit den Buttons auf der linken Bilschirmseite können Sie die Aufnahme kontrollieren. Geben Sie bitte zuerst Ihren Namen (und/oder Fakultät oder andere Informationen) ein, wenn Sie diese(n) in der Präsentation als Bauchbinde anzeigen lassen wollen."
-textRecordControl2 = "Sie können zwischen fünf Szenen auswählen, im Folgenden erhalten Sie einen Überblick über diese."
+textRecordControl1 = "Möchten Sie eine Bauchbinde verwenden? Falls ja, geben Sie bitte Ihren Namen (und/oder Fakultät oder andere Informationen) in das Feld auf der linken Bildschirmseite ein."
+textRecordControl2 = "Im Folgenden erhalten Sie eine kurze Übersicht über die verschiedenen Szenen, die Sie verwenden können."
 textRecordControl3 = "Mit dem ersten Button, \"Picture in Picture 1\", werden Sie in groß angezeigt, während die Präsentation in einem Fenster daneben gezeigt wird."
 textRecordControl4 = "Mit dem zweiten Button, \"Picture in Picture 2\", wird die Präsentation in groß angezeigt, während Sie in einem kleinen Fenster in der oberen Ecke des Bildes zu sehen sind."
 textRecordControl5 = "Mit dem dritten Button, \"Präsentation groß\", wird die Präsentation in groß auf dem Fernseher hinter Ihnen angezeigt."
@@ -134,10 +139,15 @@ textRecordControl10 = "Sie können außerdem zwischen drei Hintergründen wähle
 textAudioInstructions1 = "Stellen Sie sich aufrecht auf die Markierung auf dem Boden, als würden Sie präsentieren, und reden Sie in normaler Lautstärke. Überprüfen Sie die Lautstärke auf dem linken Monitor (siehe Bild). Das Lautstärkelevel sollte im gelben Bereich liegen."
 textAudioInstructions2 = "Wenn die Lautstärke im grünen Bereich liegt, drehen Sie den Knopf auf dem Audio Interface im Uhrzeigersinn (siehe Bild) und reden Sie erneut in normaler Lautstärke. Liegt die Lautstärke im roten Bereich, drehen Sie den Knopf gegen den Uhrzeigersinn."
 
-textRecording1 = "Wenn Sie bereit für die Aufnahme sind, drücken sie auf den Aufnahme-Button (siehe Bild). Die Aufnahme beginnt nach einen fünfsekündigen Countdown. Drücken Sie den Button erneut, um die Aufnahme zu beenden."
-textRecording2 = "Sie können so viele Clips aufnehmen wie sie wollen. Auf der nächsten Seite haben Sie die Möglichkeit, den letzten Clip anzusehen, zu löschen, oder am Ende des Clips einige Sekunden wegzuschneiden."
-textRecording4 = "Sie können Ihre Clips nach den Aufnahmen in ein Video zusammenführen. In dem Menü dafür können Sie die Clips ebenfalls erneut anschauen und auswählen welche Sie verwenden möchten. Die Reihenfolge entspricht dabei der Reihenfolge der Aufnahme und kann nicht geändert werden."
-textRecording3 = "Wenn Sie auf den Button drücken, mit dem der letzte Clip angesehen werden kann, öffnet sich ein Videoplayer. Diesen Player müssen Sie nach Anschauen des Clips selber mit Drücken auf das Kreuz in der oberen rechten Ecke schließen."
+textRecording1 = "Machen Sie nun eine Testaufnahme! Drücken Sie auf den \"Aufnahme\" Button auf der linken Bildschirmseite, nach fünf Sekunden Countdown beginnt die Aufnahme. Wenn Sie eine Bauchbinde verwenden wollen, drücken Sie vorher auf \"Bauchbinde\"."
+textRecording2 = "Reden Sie einige Sätze und gehen Sie durch Ihre Folien, um ein Gefühl für den Aufbau zu bekommen. Beenden Sie die Aufnahme durch erneutes Drücken des \"Aufnahme\" Buttons."
+textRecording4 = "Sie können so viele Aufnahmen machen wie sie wollen. Sie können auf den nächsten Seiten nach einer Aufnahme das jeweils letzte Video anschauen, löschen, oder zuschneiden."
+textRecording3 = ""
+
+textReviewVideo = "Drücken Sie den Button unterhalb um das letzte Video erneut anzusehen. Bitte schließen Sie danach das Fenster des Videoplayers durch Drücken des Kreuzes in der oberen rechten Ecke."
+textDeleteVideo = "Drücken Sie auf den Button unterhalb um das letzte aufgenommene Video permanent zu löschen."
+textTrimVideo = "Drücken Sie auf den Button unterhalb um bis zu 10 Sekunden am Ende des Videos wegzuschneiden. Sie können das geschnittene Video dann ansehen und dann bestätigen, dass Sie es behalten wollen. Falls nicht, können Sie erneut schneiden oder abbrechen."
+textFinish = "Drücken Sie auf den Button unterhalb um die Aufnahmen zu beenden und zum Bildschirm für das Zusammenführen der Videos zu gelangen."
 
 textFileControlIntro = "Not sure what's here."
 
@@ -401,11 +411,19 @@ class VideoCabinInstructions:
         windowNew.title("Video Files")
         textFont = (textFontStyle,textFontSize)
 
-        button_back = Button(windowNew, text="Nächstes Video aufnehmen", font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=0, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text="Zurück zur Anleitung", font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=8, padx=paddingX, pady=paddingY)
+
+        label_reviewText = Label(windowNew, text=textReviewVideo, wraplength=labelWrapLength, font=textFont).grid(row=0, padx=paddingX, pady=paddingY)
         button_rewatchLatest = Button(windowNew, text=textButtonRewatch, font=textFont, command=VideoCabinInstructions.playLatestVideo).grid(row=1, padx=paddingX, pady=paddingY)
-        button_deleteLatest = Button(windowNew, text=textButtonDeleteLatest, bg="red", font=textFont, command= lambda: VideoCabinInstructions.deleteLatestVideo(windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
-        button_trimLatest = Button(windowNew, text=textButtonTrimLatest, font=textFont, command= lambda: VideoCabinInstructions.trimLatestVideo(windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
-        button_finish = Button(windowNew, text=textButtonFinish, font=textFont, command= lambda: VideoCabinInstructions.startMergeControl(windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
+
+        label_deleteLast = Label(windowNew, text=textDeleteVideo, wraplength=labelWrapLength, font=textFont).grid(row=2, padx=paddingX, pady=paddingY)
+        button_deleteLatest = Button(windowNew, text=textButtonDeleteLatest, bg="red", font=textFont, command= lambda: VideoCabinInstructions.deleteLatestVideo(windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        
+        label_trimLast = Label(windowNew, text=textTrimVideo, wraplength=labelWrapLength, font=textFont).grid(row=4, padx=paddingX, pady=paddingY)
+        button_trimLatest = Button(windowNew, text=textButtonTrimLatest, font=textFont, command= lambda: VideoCabinInstructions.trimLatestVideo(windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+
+        label_finish = Label(windowNew, text=textFinish, wraplength=labelWrapLength, font=textFont).grid(row=6, padx=paddingX, pady=paddingY)
+        button_finish = Button(windowNew, text=textButtonFinish, font=textFont, command= lambda: VideoCabinInstructions.startMergeControl(windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
 
         windowNew.mainloop()
         
@@ -639,7 +657,7 @@ class VideoCabinInstructions:
 
         label_recordControl3 = Label(windowNew, text=textRecordControl3, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
-        img_pip1 = VideoCabinInstructions.resizeImg(Image.open(imagePathPiPButton), 6)
+        img_pip1 = VideoCabinInstructions.resizeImg(Image.open(imagePathPiP1), 4)
         img_pip1 = ImageTk.PhotoImage(img_pip1)
         label_img_pip1 = Label(windowNew, image=img_pip1)
         label_img_pip1.grid(row=1, padx=paddingX, pady=paddingY)
@@ -647,7 +665,7 @@ class VideoCabinInstructions:
 
         label_recordControl4 = Label(windowNew, text=textRecordControl4, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
 
-        img_pip2 = VideoCabinInstructions.resizeImg(Image.open(imagePathPiP2Button), 6)
+        img_pip2 = VideoCabinInstructions.resizeImg(Image.open(imagePathPiP2), 4)
         img_pip2 = ImageTk.PhotoImage(img_pip2)
         label_img_pip2 = Label(windowNew, image=img_pip2)
         label_img_pip2.grid(row=3, padx=paddingX, pady=paddingY)
@@ -655,7 +673,7 @@ class VideoCabinInstructions:
 
         label_recordControl5 = Label(windowNew, text=textRecordControl5, font=textFont, wraplength=labelWrapLength).grid(row=4, padx=paddingX, pady=paddingY)
 
-        img_presLarge = VideoCabinInstructions.resizeImg(Image.open(imagePathPresLargeButton), 6)
+        img_presLarge = VideoCabinInstructions.resizeImg(Image.open(imagePathPresLarge), 4)
         img_presLarge = ImageTk.PhotoImage(img_presLarge)
         label_img_presLarge = Label(windowNew, image=img_presLarge)
         label_img_presLarge.grid(row=5, padx=paddingX, pady=paddingY)
@@ -664,7 +682,7 @@ class VideoCabinInstructions:
         button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
         button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
 
-    def instructions_recordControl3(windowOld):
+    def instructions_recordControl4(windowOld):
         if(windowOld is not None):
             windowOld.destroy()
 
@@ -680,7 +698,7 @@ class VideoCabinInstructions:
         button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
         button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
 
-    def instructions_recordControl4(windowOld):
+    def instructions_recordControl3(windowOld):
         if(windowOld is not None):
             windowOld.destroy()
 
@@ -689,9 +707,24 @@ class VideoCabinInstructions:
         windowNew.title("Record Control 2")
         textFont = (textFontStyle,textFontSize)
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        label_recordControl1 = Label(windowNew, text=textRecordControl8, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
+        img_pip1 = VideoCabinInstructions.resizeImg(Image.open(imagePathPresSmall), 4)
+        img_pip1 = ImageTk.PhotoImage(img_pip1)
+        label_img_pip1 = Label(windowNew, image=img_pip1)
+        label_img_pip1.grid(row=1, padx=paddingX, pady=paddingY)
+        label_img_pip1.image = img_pip1
+
+        label_recordControl2 = Label(windowNew, text=textRecordControl9, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+
+        img_pip2 = VideoCabinInstructions.resizeImg(Image.open(imagePathBackground), 4)
+        img_pip2 = ImageTk.PhotoImage(img_pip2)
+        label_img_pip2 = Label(windowNew, image=img_pip2)
+        label_img_pip2.grid(row=3, padx=paddingX, pady=paddingY)
+        label_img_pip2.image = img_pip2
+
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
 
     def instructions_audioLevel(windowOld):
         if(windowOld is not None):
@@ -731,12 +764,19 @@ class VideoCabinInstructions:
         textFont = (textFontStyle,textFontSize)
 
         label_startRecording1 = Label(windowNew, text=textRecording1, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
-        label_startRecording2 = Label(windowNew, text=textRecording2, font=textFont, wraplength=labelWrapLength).grid(row=1, padx=paddingX, pady=paddingY)
-        label_startRecording3 = Label(windowNew, text=textRecording3, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
-        label_startRecording4 = Label(windowNew, text=textRecording4, font=textFont, wraplength=labelWrapLength).grid(row=3, padx=paddingX, pady=paddingY)
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+        img_recordBtn = VideoCabinInstructions.resizeImg(Image.open(imagePathRecordButton), 5)
+        img_recordBtn = ImageTk.PhotoImage(img_recordBtn)
+        label_img_recordBtn = Label(windowNew, image=img_recordBtn)
+        label_img_recordBtn.grid(row=1, padx=paddingX, pady=paddingY)
+        label_img_recordBtn.image = img_recordBtn
+
+        label_startRecording2 = Label(windowNew, text=textRecording2, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_startRecording3 = Label(windowNew, text=textRecording3, font=textFont, wraplength=labelWrapLength).grid(row=3, padx=paddingX, pady=paddingY)
+        label_startRecording4 = Label(windowNew, text=textRecording4, font=textFont, wraplength=labelWrapLength).grid(row=4, padx=paddingX, pady=paddingY)
+
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
 
     def introWindow(windowOld):
         if(windowOld is not None):
