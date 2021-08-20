@@ -1,3 +1,5 @@
+# Author: Malte Wollermann
+
 # tkinter for GUI
 from tkinter import *
 from tkinter import filedialog

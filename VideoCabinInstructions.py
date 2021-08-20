@@ -1,3 +1,5 @@
+# Author: Malte Wollermann
+
 # tkinter for GUI
 import tkinter as tk
 from tkinter import Grid, Label
