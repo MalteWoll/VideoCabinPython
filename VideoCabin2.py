@@ -6,7 +6,9 @@ from tkinter import font
 from tkinter.ttk import Style
 from typing import Collection, Sized
 
+# Threading for merging files on another thread, time for freezing the application, if needed
 import threading
+import time
 
 # glob for finding files
 import glob
@@ -619,12 +621,26 @@ class VideoCabin2:
             button2.config(state="normal")
 
     def trimCancel(windowOld, file):
+        # Check if the file is still opened in VLC and if yes, kill the process to make sure the file can be renamed
+        try:
+            os.system("taskkill /f /im vlc.exe")
+        except:
+            print("VLC was not running, no need to kill process.")
+        # To make sure the process has been killed before continuing, we freeze the application for a second
+        time.sleep(1)
         # Check if a trim file has been created and if yes, delete it, then close the window
         if(os.path.isfile(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))):
             os.remove(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))
         windowOld.destroy()
 
     def trimApply(windowOld, file):
+        # Check if the file is still opened in VLC and if yes, kill the process to make sure the file can be renamed
+        try:
+            os.system("taskkill /f /im vlc.exe")
+        except:
+            print("VLC was not running, no need to kill process.")
+        # To make sure the process has been killed before continuing, we freeze the application for a second
+        time.sleep(1)
         # To be sure, check for the file
         if(os.path.isfile(os.path.dirname(file)+"/TRIM_"+os.path.basename(file))):
             # If it is there, remove the old file and rename the new file
