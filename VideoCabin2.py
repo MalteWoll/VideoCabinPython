@@ -224,7 +224,6 @@ class VideoCabin2:
 
     # Copy output file to connected USB flash drive. For now, the drive must be specified beforehand -> This should be ok, since it should not change on the computer the script runs on
     def copyToDrive(outputFilePath):
-        # TODO: Find path? Prompt user to find path?
         drivePath = "G:"
         copyfile(outputFilePath+"/output.mkv",drivePath+"/output.mkv")
 
@@ -284,20 +283,21 @@ class VideoCabin2:
     # Method to start the merge process. To prevent freezing the GUI and allowing an information about the process, it has been moved to another thread.
     def startMergeThread(windowOld, i_row, frame):
         txtFont = ("Helvetica",20)
-        windowMergeInProgress = Toplevel(windowOld)
-        windowMergeInProgress.geometry("800" + "x" + "400" + "+" + "600" + "+" + "250")
-        windowMergeInProgress.grab_set()
-        windowMergeInProgress.attributes('-disabled', True)
-        windowMergeInProgress.configure(background=bgColor)
+        if(len(filesToUse) >= 2):
+            windowMergeInProgress = Toplevel(windowOld)
+            windowMergeInProgress.geometry("800" + "x" + "400" + "+" + "600" + "+" + "250")
+            windowMergeInProgress.grab_set()
+            windowMergeInProgress.attributes('-disabled', True)
+            windowMergeInProgress.configure(background=bgColor)
 
-        label_mergeInProgress = Label(windowMergeInProgress, text="Zusammenführen, bitte warten.", font=txtFont, fg=fgColor)
-        label_mergeInProgress.place(in_=windowMergeInProgress, anchor="c", relx=.5, rely=.2)
-        label_mergeInProgress.configure(background=bgColor)
-        label_mergeInProgress2 = Label(windowMergeInProgress, text="Dies kann einige Minuten dauern.", font=txtFont, fg=fgColor)
-        label_mergeInProgress2.place(in_=windowMergeInProgress, anchor="c", relx=.5, rely=.4)
-        label_mergeInProgress2.configure(background=bgColor)
+            label_mergeInProgress = Label(windowMergeInProgress, text="Zusammenführen, bitte warten.", font=txtFont, fg=fgColor)
+            label_mergeInProgress.place(in_=windowMergeInProgress, anchor="c", relx=.5, rely=.2)
+            label_mergeInProgress.configure(background=bgColor)
+            label_mergeInProgress2 = Label(windowMergeInProgress, text="Dies kann einige Minuten dauern.", font=txtFont, fg=fgColor)
+            label_mergeInProgress2.place(in_=windowMergeInProgress, anchor="c", relx=.5, rely=.4)
+            label_mergeInProgress2.configure(background=bgColor)
 
-        threading.Thread(target= lambda: VideoCabin2.mergeFiles(windowOld, i_row, frame, windowMergeInProgress)).start()
+            threading.Thread(target= lambda: VideoCabin2.mergeFiles(windowOld, i_row, frame, windowMergeInProgress)).start()
 
     # Method for merging files. From the list of files to merge, a new list is created with the durations of the video files. Then, a ffmpeg command is created and executed via console.
     def mergeFiles(windowOld, i_row, frame, windowPopup):

@@ -44,6 +44,11 @@ windowPositionY = 0
 # counter variable for controlling the order in which instructional windows are opened up
 orderControlCounter = 0
 
+# Colors for background, buttons, and text
+bgColor = '#1e1e1e'
+btnColor = '#4c4c4c'
+fgColor = '#ffffff'
+
 # Path to video files
 videoFileDir = "D:/obs_scripts/python/videoSource"
 videoFileDir2 = "C:/Users/Video-Selfie/Videos/VideoCabinFiles"
@@ -280,12 +285,14 @@ class VideoCabinInstructions:
 
         areYouSureWindow = tk.Toplevel(windowOld)
         areYouSureWindow.geometry(str(popUpWidth) + "x" + str(popUpHeight) + "+" + str(windowPositionX + int(windowWidth * 0.25)) + "+" + str(int(windowPositionY + 40)))
+        areYouSureWindow.configure(background=bgColor)
+
         textFont = (textFontStyle,textFontSize)
 
-        label_areYouSure = Label(areYouSureWindow, text=textDeleteAreYouSure, font=textFont, wraplength=int(popUpWidth-20)).grid(row=0, padx=paddingX, pady=paddingY)
+        label_areYouSure = Label(areYouSureWindow, text=textDeleteAreYouSure, font=textFont, wraplength=int(popUpWidth-20), bg=bgColor, fg=fgColor).grid(row=0, padx=paddingX, pady=paddingY)
 
-        button_cancel = Button(areYouSureWindow, text=textButtonCancel, font=textFont, command= lambda: areYouSureWindow.destroy()).grid(row=1, padx=paddingX, pady=paddingY)
-        button_delete = Button(areYouSureWindow, text=textButtonDelete, font=textFont, command= lambda: removeFile(areYouSureWindow)).grid(row=2, padx=paddingX, pady=paddingY)
+        button_cancel = Button(areYouSureWindow, text=textButtonCancel, font=textFont, bg=btnColor, fg=fgColor, command= lambda: areYouSureWindow.destroy()).grid(row=1, padx=paddingX, pady=paddingY)
+        button_delete = Button(areYouSureWindow, text=textButtonDelete, font=textFont, bg=btnColor, fg=fgColor, command= lambda: removeFile(areYouSureWindow)).grid(row=2, padx=paddingX, pady=paddingY)
 
     def trimLatestVideo(windowOld):
         # Get all video files
@@ -302,6 +309,7 @@ class VideoCabinInstructions:
 
         trimWindow = tk.Toplevel(windowOld)
         trimWindow.geometry(str(popUpWidth) + "x" + str(popUpHeight) + "+" + str(windowPositionX + int(windowWidth * 0.25)) + "+" + str(int(windowPositionY + 40)))
+        trimWindow.configure(background=bgColor)
         txtFont = (textFontStyle,textFontSize)
 
         if(len(files) > 0):
@@ -310,38 +318,38 @@ class VideoCabinInstructions:
         # Let the user only interact with this window, as long as it is open
         trimWindow.grab_set()
 
-        frame2 = tk.Frame(trimWindow, borderwidth=1)
+        frame2 = tk.Frame(trimWindow, borderwidth=1, bg=bgColor)
      
         frame2.place(in_=trimWindow, anchor="c", relx=.5, rely=.1)
-        playButton = Button(frame2, text="Play Video", command= lambda: VideoCabinInstructions.playVideo(file), font=txtFont)
+        playButton = Button(frame2, text="Play Video", command= lambda: VideoCabinInstructions.playVideo(file), font=txtFont, bg=btnColor, fg=fgColor)
         playButton.grid(column=1, row=0, padx=5,pady=5)
 
-        frame3 = tk.Frame(trimWindow, borderwidth=1)
+        frame3 = tk.Frame(trimWindow, borderwidth=1, bg=bgColor)
         frame3.place(in_=trimWindow, anchor="c", relx=.5, rely=.3)
 
         duration = tk.StringVar(trimWindow)
-        spinbox = tk.Spinbox(frame3, from_=0, to = 10, width=3, font=('Helvetica', 40), textvariable=duration)
+        spinbox = tk.Spinbox(frame3, from_=0, to = 10, width=3, font=('Helvetica', 40), textvariable=duration, bg=bgColor, fg=fgColor)
         spinbox.grid(column=0, row=0)
 
-        frame4 = tk.Frame(trimWindow, borderwidth=1)
+        frame4 = tk.Frame(trimWindow, borderwidth=1, bg=bgColor)
         frame4.place(in_=trimWindow, anchor="c", relx=.5, rely=.4)
-        label_trimTimeText = Label(frame4, text="Sekunden am Ende des Videos schneiden", font=txtFont).grid(column=1, row=2)
+        label_trimTimeText = Label(frame4, text="Sekunden am Ende des Videos schneiden", font=txtFont, bg=bgColor, fg=fgColor).grid(column=1, row=2)
 
-        frame6 = tk.Frame(trimWindow, borderwidth=1)
+        frame6 = tk.Frame(trimWindow, borderwidth=1, bg=bgColor)
         frame6.place(in_=trimWindow, anchor="c", relx=.5, rely=.65)
-        button_previewTrim = Button(frame6, text="Videovorschau zugeschnittenes Video", font=txtFont, state='disabled', command= lambda: VideoCabinInstructions.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
+        button_previewTrim = Button(frame6, text="Videovorschau zugeschnittenes Video", font=txtFont, bg=btnColor, fg=fgColor, state='disabled', command= lambda: VideoCabinInstructions.playVideo(os.path.dirname(file)+"/TRIM_"+os.path.basename(file)))
         button_previewTrim.grid(column=0, row=0)
 
-        frame7 = tk.Frame(trimWindow, borderwidth=1)
+        frame7 = tk.Frame(trimWindow, borderwidth=1, bg=bgColor)
         frame7.place(in_=trimWindow, anchor="c", relx=.5, rely=.8)
-        button_accept = Button(frame7, text="Zuschneiden bestätigen", state='disabled', font=txtFont, command= lambda: VideoCabinInstructions.trimApply(trimWindow, file))
+        button_accept = Button(frame7, text="Zuschneiden bestätigen", state='disabled', bg=btnColor, fg=fgColor, font=txtFont, command= lambda: VideoCabinInstructions.trimApply(trimWindow, file))
         button_accept.grid(column=0, row=0, padx=5)
-        button_cancel = Button(frame7, text="Abbrechen", font=txtFont, command= lambda: VideoCabinInstructions.trimCancel(trimWindow, file))
+        button_cancel = Button(frame7, text="Abbrechen", font=txtFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.trimCancel(trimWindow, file))
         button_cancel.grid(column=1, row=0, padx=5)
 
-        frame5 = tk.Frame(trimWindow, borderwidth=1)
+        frame5 = tk.Frame(trimWindow, borderwidth=1, bg=bgColor)
         frame5.place(in_=trimWindow, anchor="c", relx=.5, rely=.5)
-        button_trim = Button(frame5, text="Zuschneiden", font=txtFont, command= lambda: VideoCabinInstructions.trimVideoFile(file, duration.get(), button_previewTrim, button_accept))
+        button_trim = Button(frame5, text="Zuschneiden", font=txtFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.trimVideoFile(file, duration.get(), button_previewTrim, button_accept))
         button_trim.grid(column=0, row=0)
 
     def trimCancel(windowOld, file):
@@ -399,8 +407,6 @@ class VideoCabinInstructions:
             button2.config(state="normal")
 
     def playVideo(file):
-        # Debug
-        #print(str(file))
         p = subprocess.Popen([videoPlayerDir, "file:///"+str(file)])
 
     # Window for reviewing the last clip recorded and to delete it, if needed
@@ -411,21 +417,22 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Video Files")
+        windowNew.configure(background=bgColor)
         textFont = (textFontStyle,textFontSize)
 
-        button_back = Button(windowNew, text="Zurück zur Anleitung", font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=8, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text="Zurück zur Anleitung", font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=8, padx=paddingX, pady=paddingY)
 
-        label_reviewText = Label(windowNew, text=textReviewVideo, wraplength=labelWrapLength, font=textFont).grid(row=0, padx=paddingX, pady=paddingY)
-        button_rewatchLatest = Button(windowNew, text=textButtonRewatch, font=textFont, command=VideoCabinInstructions.playLatestVideo).grid(row=1, padx=paddingX, pady=paddingY)
+        label_reviewText = Label(windowNew, text=textReviewVideo, wraplength=labelWrapLength, font=textFont, bg=bgColor, fg=fgColor,).grid(row=0, padx=paddingX, pady=paddingY)
+        button_rewatchLatest = Button(windowNew, text=textButtonRewatch, font=textFont, bg=btnColor, fg=fgColor, command=VideoCabinInstructions.playLatestVideo).grid(row=1, padx=paddingX, pady=paddingY)
 
-        label_deleteLast = Label(windowNew, text=textDeleteVideo, wraplength=labelWrapLength, font=textFont).grid(row=2, padx=paddingX, pady=paddingY)
-        button_deleteLatest = Button(windowNew, text=textButtonDeleteLatest, bg="red", font=textFont, command= lambda: VideoCabinInstructions.deleteLatestVideo(windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        label_deleteLast = Label(windowNew, text=textDeleteVideo, wraplength=labelWrapLength, bg=bgColor, fg=fgColor, font=textFont).grid(row=2, padx=paddingX, pady=paddingY)
+        button_deleteLatest = Button(windowNew, text=textButtonDeleteLatest, bg="red", fg=fgColor, font=textFont, command= lambda: VideoCabinInstructions.deleteLatestVideo(windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
         
-        label_trimLast = Label(windowNew, text=textTrimVideo, wraplength=labelWrapLength, font=textFont).grid(row=4, padx=paddingX, pady=paddingY)
-        button_trimLatest = Button(windowNew, text=textButtonTrimLatest, font=textFont, command= lambda: VideoCabinInstructions.trimLatestVideo(windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+        label_trimLast = Label(windowNew, text=textTrimVideo, wraplength=labelWrapLength, bg=bgColor, fg=fgColor, font=textFont).grid(row=4, padx=paddingX, pady=paddingY)
+        button_trimLatest = Button(windowNew, text=textButtonTrimLatest, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.trimLatestVideo(windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
 
-        label_finish = Label(windowNew, text=textFinish, wraplength=labelWrapLength, font=textFont).grid(row=6, padx=paddingX, pady=paddingY)
-        button_finish = Button(windowNew, text=textButtonFinish, font=textFont, command= lambda: VideoCabinInstructions.startMergeControl(windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
+        label_finish = Label(windowNew, text=textFinish, wraplength=labelWrapLength, bg=bgColor, fg=fgColor, font=textFont).grid(row=6, padx=paddingX, pady=paddingY)
+        button_finish = Button(windowNew, text=textButtonFinish, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.startMergeControl(windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
 
         windowNew.mainloop()
         
@@ -436,24 +443,25 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Phantom Power")
+        windowNew.configure(background=bgColor)
         textFont = (textFontStyle,textFontSize)
 
-        label_phantomPower1 = Label(windowNew, text=textPhantomPower1, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_phantomPower1 = Label(windowNew, text=textPhantomPower1, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         img_phantomPower1 = ImageTk.PhotoImage(VideoCabinInstructions.resizeImg(Image.open(imagePathPhantomPower1), 1))
         label_img_phantomPower1 = Label(windowNew, image=img_phantomPower1)
         label_img_phantomPower1.grid(row=1, padx=paddingX, pady=paddingY)
         label_img_phantomPower1.image = img_phantomPower1
 
-        label_phantomPower1 = Label(windowNew, text=textPhantomPower2, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_phantomPower1 = Label(windowNew, text=textPhantomPower2, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
 
         img_phantomPower2 = ImageTk.PhotoImage(VideoCabinInstructions.resizeImg(Image.open(imagePathPhantomPower2), 1))
         label_img_phantomPower2 = Label(windowNew, image=img_phantomPower2)
         label_img_phantomPower2.grid(row=3, padx=paddingX, pady=paddingY)
         label_img_phantomPower2.image = img_phantomPower2
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
 
     def instructions_openOBS(windowOld):
         if(windowOld is not None):
@@ -462,14 +470,15 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Start OBS")
+        windowNew.configure(background=bgColor)
         textFont = (textFontStyle,textFontSize)
 
-        label_startOBS = Label(windowNew, text=textStartOBS1, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_startOBS = Label(windowNew, text=textStartOBS1, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
-        button_startOBS = Button(windowNew, text=textButtonStartOBS, font=textFont, command= lambda: VideoCabinInstructions.startOBS()).grid(row=1, padx=paddingX, pady=paddingY)
+        button_startOBS = Button(windowNew, text=textButtonStartOBS, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.startOBS()).grid(row=1, padx=paddingX, pady=paddingY)
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
 
     def instructions_turnOnCamera(windowOld):
         if(windowOld is not None):
@@ -478,9 +487,10 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Turn on camera")
+        windowNew.configure(background=bgColor)
         textFont = (textFontStyle,textFontSize)
 
-        label_cameraOn1 = Label(windowNew, text=textCameraOn1, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_cameraOn1 = Label(windowNew, text=textCameraOn1, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         img_camera1 = VideoCabinInstructions.resizeImg(Image.open(imagePathCamera1), 2)
         img_camera1 = ImageTk.PhotoImage(img_camera1)
@@ -488,7 +498,7 @@ class VideoCabinInstructions:
         label_img_camera1.grid(row=1, padx=paddingX, pady=paddingY)
         label_img_camera1.image = img_camera1
 
-        label_cameraOn2 = Label(windowNew, text=textCameraOn2, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_cameraOn2 = Label(windowNew, text=textCameraOn2, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
 
         img_camera2 = VideoCabinInstructions.resizeImg(Image.open(imagePathCamera2), 2)
         img_camera2 = ImageTk.PhotoImage(img_camera2)
@@ -496,8 +506,8 @@ class VideoCabinInstructions:
         label_img_camera2.grid(row=3, padx=paddingX, pady=paddingY)
         label_img_camera2.image = img_camera2
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
 
     def instructions_laptop1(windowOld):
         if(windowOld is not None):
@@ -506,10 +516,11 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Laptop Setup")
+        windowNew.configure(background=bgColor)
         textFont = (textFontStyle,textFontSize)
 
-        label_laptop1 = Label(windowNew, text=textLaptop1, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
-        label_laptop2 = Label(windowNew, text=textLaptop3, font=textFont, wraplength=labelWrapLength).grid(row=1, padx=paddingX, pady=paddingY)
+        label_laptop1 = Label(windowNew, text=textLaptop1, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_laptop2 = Label(windowNew, text=textLaptop3, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=1, padx=paddingX, pady=paddingY)
 
         img_notification = VideoCabinInstructions.resizeImg(Image.open(imagePathExtendMonitor), 8)
         img_notification = ImageTk.PhotoImage(img_notification)
@@ -517,7 +528,7 @@ class VideoCabinInstructions:
         label_img_notification.grid(row=2, padx=paddingX, pady=paddingY)
         label_img_notification.image = img_notification
 
-        label_laptop3 = Label(windowNew, text=textLaptop4, font=textFont, wraplength=labelWrapLength).grid(row=3, padx=paddingX, pady=paddingY)
+        label_laptop3 = Label(windowNew, text=textLaptop4, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=3, padx=paddingX, pady=paddingY)
 
         img_project = VideoCabinInstructions.resizeImg(Image.open(imagePathProject), 2)
         img_project = ImageTk.PhotoImage(img_project)
@@ -525,8 +536,8 @@ class VideoCabinInstructions:
         label_img_project.grid(row=4, padx=paddingX, pady=paddingY)
         label_img_project.image = img_project
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
 
     def restartOBS():
         # First, kill the OBS process
@@ -543,17 +554,18 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Check OBS")
+        windowNew.configure(background=bgColor)
         textFont = (textFontStyle,textFontSize)
 
-        label_checkOBS1 = Label(windowNew, text=textCheckOBS, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_checkOBS1 = Label(windowNew, text=textCheckOBS, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
-        button_restartOBS = Button(windowNew, text="Neustart Aufnahmesoftware", font=textFont, command=VideoCabinInstructions.restartOBS)
+        button_restartOBS = Button(windowNew, text="Neustart Aufnahmesoftware", bg=btnColor, fg=fgColor, font=textFont, command=VideoCabinInstructions.restartOBS)
         button_restartOBS.grid(row=1, padx=paddingX, pady=paddingY)
 
-        label_checkOBS2 = Label(windowNew, text=textCheckOBS2, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_checkOBS2 = Label(windowNew, text=textCheckOBS2, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
 
     def instructions_laptop2(windowOld):
         if(windowOld is not None):
@@ -562,9 +574,10 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Laptop Setup")
+        windowNew.configure(background=bgColor)
         textFont = (textFontStyle,textFontSize)
 
-        label_laptop1 = Label(windowNew, text=textLaptop5, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_laptop1 = Label(windowNew, text=textLaptop5, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         img_project = VideoCabinInstructions.resizeImg(Image.open(imagePathProject2), 3)
         img_project = ImageTk.PhotoImage(img_project)
@@ -572,8 +585,8 @@ class VideoCabinInstructions:
         label_img_project.grid(row=1, padx=paddingX, pady=paddingY)
         label_img_project.image = img_project
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
 
     def instructions_laptop3(windowOld):
         if(windowOld is not None):
@@ -582,9 +595,10 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Laptop Setup")
+        windowNew.configure(background=bgColor)
         textFont = (textFontStyle,textFontSize)
 
-        label_laptop1 = Label(windowNew, text=textLaptop2, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_laptop1 = Label(windowNew, text=textLaptop2, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         img_laptopHDMI = VideoCabinInstructions.resizeImg(Image.open(imagePathLaptopHMDI), 1)
         img_laptopHDMI = ImageTk.PhotoImage(img_laptopHDMI)
@@ -592,8 +606,8 @@ class VideoCabinInstructions:
         label_img_laptopHDMI.grid(row=1, padx=paddingX, pady=paddingY)
         label_img_laptopHDMI.image = img_laptopHDMI
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
 
     def instructions_presenter(windowOld):
         if(windowOld is not None):
@@ -602,9 +616,10 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Connect Presenter")
+        windowNew.configure(background=bgColor)
         textFont = (textFontStyle,textFontSize)
 
-        label_presenter1 = Label(windowNew, text=textPresenter1, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_presenter1 = Label(windowNew, text=textPresenter1, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         img_presenter1 = VideoCabinInstructions.resizeImg(Image.open(imagePathPresenter1), 1)
         img_presenter1 = ImageTk.PhotoImage(img_presenter1)
@@ -612,7 +627,7 @@ class VideoCabinInstructions:
         label_img_presenter1.grid(row=1, padx=paddingX, pady=paddingY)
         label_img_presenter1.image = img_presenter1
 
-        label_presenter2 = Label(windowNew, text=textPresenter2, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_presenter2 = Label(windowNew, text=textPresenter2, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
 
         img_presenter2 = VideoCabinInstructions.resizeImg(Image.open(imagePathPresenter2), 1.5)
         img_presenter2 = ImageTk.PhotoImage(img_presenter2)
@@ -620,10 +635,10 @@ class VideoCabinInstructions:
         label_img_presenter2.grid(row=3, padx=paddingX, pady=paddingY)
         label_img_presenter2.image = img_presenter2
 
-        label_presenter3 = Label(windowNew, text=textPresenter3, font=textFont, wraplength=labelWrapLength).grid(row=4, padx=paddingX, pady=paddingY)
+        label_presenter3 = Label(windowNew, text=textPresenter3, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=4, padx=paddingX, pady=paddingY)
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
 
 
     def instructions_recordControl1(windowOld):
@@ -633,9 +648,10 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Record Control 1")
+        windowNew.configure(background=bgColor)       
         textFont = (textFontStyle,textFontSize)
 
-        label_recordControl1 = Label(windowNew, text=textRecordControl1, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_recordControl1 = Label(windowNew, text=textRecordControl1, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         img_bauchbinde = VideoCabinInstructions.resizeImg(Image.open(imagePathBauchbinde), 1.5)
         img_bauchbinde = ImageTk.PhotoImage(img_bauchbinde)
@@ -643,10 +659,10 @@ class VideoCabinInstructions:
         label_img_bauchbinde.grid(row=1, padx=paddingX, pady=paddingY)
         label_img_bauchbinde.image = img_bauchbinde
 
-        label_recordControl2 = Label(windowNew, text=textRecordControl2, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_recordControl2 = Label(windowNew, text=textRecordControl2, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
 
     def instructions_recordControl2(windowOld):
         if(windowOld is not None):
@@ -655,9 +671,10 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Record Control 2")
+        windowNew.configure(background=bgColor) 
         textFont = (textFontStyle,textFontSize)
 
-        label_recordControl3 = Label(windowNew, text=textRecordControl3, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_recordControl3 = Label(windowNew, text=textRecordControl3, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         img_pip1 = VideoCabinInstructions.resizeImg(Image.open(imagePathPiP1), 4)
         img_pip1 = ImageTk.PhotoImage(img_pip1)
@@ -665,7 +682,7 @@ class VideoCabinInstructions:
         label_img_pip1.grid(row=1, padx=paddingX, pady=paddingY)
         label_img_pip1.image = img_pip1
 
-        label_recordControl4 = Label(windowNew, text=textRecordControl4, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_recordControl4 = Label(windowNew, text=textRecordControl4, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
 
         img_pip2 = VideoCabinInstructions.resizeImg(Image.open(imagePathPiP2), 4)
         img_pip2 = ImageTk.PhotoImage(img_pip2)
@@ -673,7 +690,7 @@ class VideoCabinInstructions:
         label_img_pip2.grid(row=3, padx=paddingX, pady=paddingY)
         label_img_pip2.image = img_pip2
 
-        label_recordControl5 = Label(windowNew, text=textRecordControl5, font=textFont, wraplength=labelWrapLength).grid(row=4, padx=paddingX, pady=paddingY)
+        label_recordControl5 = Label(windowNew, text=textRecordControl5, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=4, padx=paddingX, pady=paddingY)
 
         img_presLarge = VideoCabinInstructions.resizeImg(Image.open(imagePathPresLarge), 4)
         img_presLarge = ImageTk.PhotoImage(img_presLarge)
@@ -681,8 +698,8 @@ class VideoCabinInstructions:
         label_img_presLarge.grid(row=5, padx=paddingX, pady=paddingY)
         label_img_presLarge.image = img_presLarge
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=7, padx=paddingX, pady=paddingY)
 
     def instructions_recordControl4(windowOld):
         if(windowOld is not None):
@@ -691,14 +708,15 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Record Control 2")
+        windowNew.configure(background=bgColor) 
         textFont = (textFontStyle,textFontSize)
 
-        label_recordControl6 = Label(windowNew, text=textRecordControl6, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_recordControl6 = Label(windowNew, text=textRecordControl6, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
-        label_recordControl7 = Label(windowNew, text=textRecordControl7, font=textFont, wraplength=labelWrapLength).grid(row=1, padx=paddingX, pady=paddingY)
+        label_recordControl7 = Label(windowNew, text=textRecordControl7, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=1, padx=paddingX, pady=paddingY)
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
 
     def instructions_recordControl3(windowOld):
         if(windowOld is not None):
@@ -707,9 +725,10 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Record Control 2")
+        windowNew.configure(background=bgColor) 
         textFont = (textFontStyle,textFontSize)
 
-        label_recordControl1 = Label(windowNew, text=textRecordControl8, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_recordControl1 = Label(windowNew, text=textRecordControl8, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         img_pip1 = VideoCabinInstructions.resizeImg(Image.open(imagePathPresSmall), 4)
         img_pip1 = ImageTk.PhotoImage(img_pip1)
@@ -717,7 +736,7 @@ class VideoCabinInstructions:
         label_img_pip1.grid(row=1, padx=paddingX, pady=paddingY)
         label_img_pip1.image = img_pip1
 
-        label_recordControl2 = Label(windowNew, text=textRecordControl9, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_recordControl2 = Label(windowNew, text=textRecordControl9, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
 
         img_pip2 = VideoCabinInstructions.resizeImg(Image.open(imagePathBackground), 4)
         img_pip2 = ImageTk.PhotoImage(img_pip2)
@@ -725,8 +744,8 @@ class VideoCabinInstructions:
         label_img_pip2.grid(row=3, padx=paddingX, pady=paddingY)
         label_img_pip2.image = img_pip2
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
 
     def instructions_audioLevel(windowOld):
         if(windowOld is not None):
@@ -735,9 +754,10 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Audio Level")
+        windowNew.configure(background=bgColor) 
         textFont = (textFontStyle,textFontSize)
 
-        label_audioLevel1 = Label(windowNew, text=textAudioInstructions1, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_audioLevel1 = Label(windowNew, text=textAudioInstructions1, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         img_audioLevel1 = VideoCabinInstructions.resizeImg(Image.open(imagePathAudio1), 1)
         img_audioLevel1 = ImageTk.PhotoImage(img_audioLevel1)
@@ -745,7 +765,7 @@ class VideoCabinInstructions:
         label_img_audioLevel1.grid(row=1, padx=paddingX, pady=paddingY)
         label_img_audioLevel1.image = img_audioLevel1
 
-        label_audioLevel2 = Label(windowNew, text=textAudioInstructions2, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_audioLevel2 = Label(windowNew, text=textAudioInstructions2, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
 
         img_audioLevel2 = VideoCabinInstructions.resizeImg(Image.open(imagePathAudio2), 1)
         img_audioLevel2 = ImageTk.PhotoImage(img_audioLevel2)
@@ -753,8 +773,8 @@ class VideoCabinInstructions:
         label_img_audioLevel2.grid(row=3, padx=paddingX, pady=paddingY)
         label_img_audioLevel2.image = img_audioLevel2
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
 
     def instructions_recording(windowOld):
         if(windowOld is not None):
@@ -763,9 +783,10 @@ class VideoCabinInstructions:
         windowNew = tk.Tk()
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
         windowNew.title("Start Recording")
+        windowNew.configure(background=bgColor) 
         textFont = (textFontStyle,textFontSize)
 
-        label_startRecording1 = Label(windowNew, text=textRecording1, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_startRecording1 = Label(windowNew, text=textRecording1, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         img_recordBtn = VideoCabinInstructions.resizeImg(Image.open(imagePathRecordButton), 5)
         img_recordBtn = ImageTk.PhotoImage(img_recordBtn)
@@ -773,12 +794,12 @@ class VideoCabinInstructions:
         label_img_recordBtn.grid(row=1, padx=paddingX, pady=paddingY)
         label_img_recordBtn.image = img_recordBtn
 
-        label_startRecording2 = Label(windowNew, text=textRecording2, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
-        label_startRecording3 = Label(windowNew, text=textRecording3, font=textFont, wraplength=labelWrapLength).grid(row=3, padx=paddingX, pady=paddingY)
-        label_startRecording4 = Label(windowNew, text=textRecording4, font=textFont, wraplength=labelWrapLength).grid(row=4, padx=paddingX, pady=paddingY)
+        label_startRecording2 = Label(windowNew, text=textRecording2, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+        label_startRecording3 = Label(windowNew, text=textRecording3, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=3, padx=paddingX, pady=paddingY)
+        label_startRecording4 = Label(windowNew, text=textRecording4, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength).grid(row=4, padx=paddingX, pady=paddingY)
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
+        button_continue = Button(windowNew, text=textButtonContinue, bg=btnColor, fg=fgColor, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=5, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, bg=btnColor, fg=fgColor, font=textFont, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=6, padx=paddingX, pady=paddingY)
 
     def introWindow(windowOld):
         if(windowOld is not None):
@@ -786,20 +807,21 @@ class VideoCabinInstructions:
 
         windowNew = tk.Tk()
         windowNew.title("Instructions")
+        windowNew.configure(background=bgColor) 
         windowNew.geometry(str(windowWidth) + "x" + str(windowHeight) + "+" + str(windowPositionX) + "+" + str(windowPositionY))
 
         textFont = (textFontStyle,textFontSize)
 
         # Welcome messages
-        label_welcome1 = Label(windowNew, text=textWelcomeMessage1, font=textFont, wraplength=labelWrapLength )
+        label_welcome1 = Label(windowNew, text=textWelcomeMessage1, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength )
         label_welcome1.grid(row=0, padx=paddingX, pady=50)
-        label_welcome2 = Label(windowNew, text=textWelcomeMessage2, font=textFont, wraplength=labelWrapLength )
+        label_welcome2 = Label(windowNew, text=textWelcomeMessage2, bg=bgColor, fg=fgColor, font=textFont, wraplength=labelWrapLength )
         label_welcome2.grid(row=1, padx=paddingX, pady=50)
 
         # Buttons
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew))
+        button_continue = Button(windowNew, text=textButtonContinue, bg=btnColor, fg=fgColor, font=textFont, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew))
         button_continue.grid(row=2, padx=paddingX, pady=10)
-        button_skip = Button(windowNew, text=textButtonSkip, font=textFont, command= lambda: VideoCabinInstructions.orderControl("skip", windowNew))
+        button_skip = Button(windowNew, text=textButtonSkip, bg=btnColor, fg=fgColor, font=textFont, command= lambda: VideoCabinInstructions.orderControl("skip", windowNew))
         button_skip.grid(row=3, padx=paddingX, pady=10)
 
         windowNew.mainloop()
