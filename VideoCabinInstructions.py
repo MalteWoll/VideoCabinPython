@@ -45,7 +45,7 @@ windowPositionY = 0
 orderControlCounter = 0
 
 # Colors for background, buttons, and text
-bgColor = '#1e1e1e'
+bgColor = '#3a393a'
 btnColor = '#4c4c4c'
 fgColor = '#ffffff'
 
@@ -113,6 +113,7 @@ textPhantomPower1 = "Bitte drücken Sie auf den 48V Knopf auf dem Audio Interfac
 textPhantomPower2 = "\"48V\" sollte danach rot leuchten."
 
 textStartOBS1 = "Bitte drücken Sie auf den Button unter diesem Text, um die Aufnahmesoftware zu starten."
+textStartOBS2 = "Wenn die Aufnahmesoftware links von diesem Fenster zu sehen ist, drücken Sie wie gewohnt auf \"Weiter\"."
 
 textCameraOn1 = "Schalten Sie nun die Kamera ein. Drehen Sie dafür den Drehknopf oben auf der Kamera auf \"ON\" (Siehe Bild)."
 textCameraOn2 = "Zusätzlich muss der Live View eingeschaltet werden. Drücken Sie dafür auf den \"LV\" Knopf auf der Kamera, wie im Bild gezeigt."
@@ -131,7 +132,7 @@ textPresenter1 = "Nehmen Sie den Presenter und schieben Sie den USB Anschluss he
 textPresenter2 = "Verbinden Sie den USB Anschluss mit einem der USB Ports Ihres Laptops."
 textPresenter3 = "Starten Sie Powerpoint auf Ihrem Laptop und starten Sie Ihre Präsentation. Sie können nun mit dem Presenter vor und zurück in Ihren Folien gehen."
 
-textRecordControl1 = "Möchten Sie eine Bauchbinde verwenden? Falls ja, geben Sie bitte Ihren Namen (und/oder Fakultät oder andere Informationen) in das Feld auf der linken Bildschirmseite ein."
+textRecordControl1 = "Möchten Sie eine Bauchbinde verwenden? Falls ja, geben Sie bitte Ihren Namen (und/oder Fakultät oder andere Informationen) in das Feld auf der linken Bildschirmseite ein und bestätigen Sie mit Klick auf \"Apply\"."
 textRecordControl2 = "Im Folgenden erhalten Sie eine kurze Übersicht über die verschiedenen Szenen, die Sie verwenden können."
 textRecordControl3 = "Mit dem ersten Button, \"Picture in Picture 1\", werden Sie in groß angezeigt, während die Präsentation in einem Fenster daneben gezeigt wird."
 textRecordControl4 = "Mit dem zweiten Button, \"Picture in Picture 2\", wird die Präsentation in groß angezeigt, während Sie in einem kleinen Fenster in der oberen Ecke des Bildes zu sehen sind."
@@ -151,7 +152,7 @@ textRecording2 = "Reden Sie einige Sätze und gehen Sie durch Ihre Folien, um ei
 textRecording4 = "Sie können so viele Aufnahmen machen wie sie wollen. Sie können auf den nächsten Seiten nach einer Aufnahme das jeweils letzte Video anschauen, löschen, oder zuschneiden."
 textRecording3 = ""
 
-textReviewVideo = "Drücken Sie den Button unterhalb um das letzte Video erneut anzusehen. Bitte schließen Sie danach das Fenster des Videoplayers durch Drücken des Kreuzes in der oberen rechten Ecke."
+textReviewVideo = "Drücken Sie den Button unterhalb um das letzte Video erneut anzusehen."
 textDeleteVideo = "Drücken Sie auf den Button unterhalb um das letzte aufgenommene Video permanent zu löschen."
 textTrimVideo = "Drücken Sie auf den Button unterhalb um bis zu 10 Sekunden am Ende des Videos wegzuschneiden. Sie können das geschnittene Video dann ansehen und dann bestätigen, dass Sie es behalten wollen. Falls nicht, können Sie erneut schneiden oder abbrechen."
 textFinish = "Drücken Sie auf den Button unterhalb um die Aufnahmen zu beenden und zum Bildschirm für das Zusammenführen der Videos zu gelangen."
@@ -473,12 +474,14 @@ class VideoCabinInstructions:
         windowNew.configure(background=bgColor)
         textFont = (textFontStyle,textFontSize)
 
-        label_startOBS = Label(windowNew, text=textStartOBS1, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
+        label_startOBS1 = Label(windowNew, text=textStartOBS1, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=0, padx=paddingX, pady=paddingY)
 
         button_startOBS = Button(windowNew, text=textButtonStartOBS, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.startOBS()).grid(row=1, padx=paddingX, pady=paddingY)
 
-        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=2, padx=paddingX, pady=paddingY)
-        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        label_startOBS2 = Label(windowNew, text=textStartOBS2, font=textFont, bg=bgColor, fg=fgColor, wraplength=labelWrapLength).grid(row=2, padx=paddingX, pady=paddingY)
+
+        button_continue = Button(windowNew, text=textButtonContinue, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("continue", windowNew)).grid(row=3, padx=paddingX, pady=paddingY)
+        button_back = Button(windowNew, text=textButtonBack, font=textFont, bg=btnColor, fg=fgColor, command= lambda: VideoCabinInstructions.orderControl("back", windowNew)).grid(row=4, padx=paddingX, pady=paddingY)
 
     def instructions_turnOnCamera(windowOld):
         if(windowOld is not None):
